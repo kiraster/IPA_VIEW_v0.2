@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>注册</title>
+  <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+  <link rel="stylesheet" href="/static/admin/css/other/login.css" />
+  <link rel="stylesheet" href="/static/admin/css/variables.css" />
+</head>
+
+<body>
+  <div class="login-page">
+    <div class="layui-row">
+      <div class="layui-col-sm6 login-bg">
+        <img class="login-bg-img" src="/static/admin/images/banner2.svg" alt="" />
+      </div>
+      <div class="layui-col-sm6 login-form">
+        <div class="layui-form">
+          <div class="form-center">
+            <div class="form-center-box">
+              <div class="top-log-title">
+                <!-- <img class="top-log" src="http://www.layui-vue.com/assets/logo.685dda16.jpg" alt="" /> -->
+                <span>IP地址管理平台v0.2</span>
+              </div>
+              <div class="top-desc">
+                基于SNMP轮询的IP地址管理检测平台
+                <br />
+                <br />
+                （注册普通用户）
+              </div>
+              <div style="margin-top: 30px">
+                <div class="layui-form-item">
+                  <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                      <i class="layui-icon layui-icon-friends"></i>
+                    </div>
+                    <input lay-verify="required" placeholder="昵称" autocomplete="off" name="nickname" value=""
+                      class="layui-input" />
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                      <i class="layui-icon layui-icon-username"></i>
+                    </div>
+                    <input lay-verify="required" placeholder="用户名" autocomplete="off" name="username" value=""
+                      class="layui-input" />
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                      <i class="layui-icon layui-icon-password"></i>
+                    </div>
+                    <input type="password" name="password" value="" lay-verify="required|confirmPassword"
+                      placeholder="密码" autocomplete="off" class="layui-input" lay-affix="eye" />
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                      <i class="layui-icon layui-icon-password"></i>
+                    </div>
+                    <input type="password" name="confirm_password" value="" lay-verify="required|confirmPassword"
+                      placeholder="确认密码" autocomplete="off" class="layui-input" lay-affix="eye" />
+                  </div>
+                </div>
+                <!-- <div class="tab-log-verification">
+                  <div class="verification-text">
+                    <div class="layui-input-wrap">
+                      <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-auz"></i>
+                      </div>
+                      <input lay-verify="required" placeholder="验证码" autocomplete="off" class="layui-input" />
+                    </div>
+                  </div>
+                  <img src="/static/admin/images/captcha.gif" alt="" class="verification-img" />
+                </div> -->
+                <!-- <div class="layui-form-item">
+                  <div class="remember-passsword">
+                    <div class="remember-cehcked">
+                      <input type="checkbox" name="sign-up" lay-skin="primary" title="注册成功后自动登录" checked />
+                    </div>
+                  </div>
+                </div> -->
+                <div class="login-btn">
+                  <button type="button" lay-submit lay-filter="sign-up" class="layui-btn login">
+                    注 册
+                  </button>
+                </div>
+                <div class="other-login">
+                  <div class="other-login-methods">其他方式</div>
+                  <a class="greenText" href="/view/login.html">登录</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 资 源 引 入 -->
+  <script src="/static/component/layui/layui.js"></script>
+  <script src="/static/component/pear/pear.js"></script>
+  <script>
+    layui.use(["form", "button", "popup", "jquery"], function () {
+      var form = layui.form;
+      var button = layui.button;
+      var popup = layui.popup;
+      var $ = layui.jquery;
+
+      // 注册提交
+      form.on("submit(sign-up)", function (data) {
+        /// 验证
+
+        /// 动画
+        let btn = button.load({ elem: ".login" });
+
+        /// ajax请求创建用户
+        $.ajax({
+          url: "/api/v1/user/register",
+          type: "POST",
+          data: JSON.stringify(data.field),
+          contentType: "application/json",
+          success: function (response) {
+            btn.stop(function () {
+              layer.msg(response.message, {
+                icon: 1
+              }, function () {
+                location.href = "/"; // 跳转登陆页
+              });
+            });
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.msg : '请求失败';
+            btn.stop(function () {
+              layer.msg('错误: ' + errorMessage, { icon: 2 });
+            });
+          },
+        });
+        return false;
+      });
+    });
+  </script>
+</body>
+
+</html>

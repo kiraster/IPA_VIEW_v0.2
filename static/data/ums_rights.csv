@@ -1,0 +1,50 @@
+id,name,code,type,url,icon_sign,status,sort,open_type,pid
+100,开始,,menu-1,,layui-icon layui-icon-home,,1,,0
+101,首页,,path-1,/view/start/index.html,layui-icon layui-icon-home,,1,_component,100
+102,系统监控,,path-1,/view/start/monitor.html,layui-icon layui-icon-console,,2,_component,100
+103,IP地址使用,,menu-1,,layui-icon layui-icon-note,,2,,0
+104,IP地址信息,,path-1,/view/ip_mgmt/ips.html,,,1,,103
+105,新增IP地址,ip_table:add,auth,,,,0,,104
+106,删除IP地址,ip_table:delete,auth,,,,0,,104
+107,修改IP地址,ip_table:update,auth,,,,0,,104
+108,查询IP地址,ip_table:get,auth,,,,0,,104
+109,分组,,path-1,/view/ip_mgmt/groups.html,,,2,,103
+110,新增IP分组,group_table:add,auth,,,,0,,109
+111,删除IP分组,group_table:delete,auth,,,,0,,109
+112,修改IP分组,group_table:update,auth,,,,0,,109
+113,查询IP分组,group_table:get,auth,,,,0,,109
+114,系统设置,,menu-1,,layui-icon layui-icon-set-fill,,3,,0
+115,账户与权限,ums:rights,menu-2,,layui-icon layui-icon-set-fill,,1,,114
+116,权限,ums:rights:list,path-2,/system/rights/index.html,layui-icon layui-icon-console,,1,,115
+117,新增权限,ums:rights:create,auth,,,,0,,116
+118,修改权限,ums:rights:update,auth,,,,0,,116
+119,获取权限,ums:rights:read,auth,,,,0,,116
+120,删除权限,ums:rights:delete,auth,,,,0,,116
+121,角色,ums:role,path-2,/system/role/index.html,layui-icon layui-icon-console,,2,,115
+122,新增角色,ums:role:create,auth,,,,0,,121
+123,修改角色,ums:role:update,auth,,,,0,,121
+124,查询角色,ums:role:read,auth,,,,0,,121
+125,删除角色,ums:role:delete,auth,,,,0,,121
+126,部门,ums:department,path-2,/system/department/index.html,layui-icon layui-icon-console,,3,,115
+127,新建部门,ums:department:create,auth,,,,0,,126
+128,修改部门,ums:department:update,auth,,,,0,,126
+129,删除部门,ums:department:delete,auth,,,,0,,126
+130,查询部门,ums:department:read,auth,,,,0,,126
+131,用户,ums:user,path-2,/system/user/index.html,layui-icon layui-icon-console,,4,,115
+132,新增用户,ums:user:create,auth,,,,0,,131
+133,修改用户,ums:user:update,auth,,,,0,,131
+134,删除用户,ums:user:read,auth,,,,0,,131
+135,查询用户,ums:user:read,auth,,,,0,,131
+136,定时任务,,path-1,/view/system/app-scheduler.html,,,2,,114
+137,新增定时任务,jobs:add,auth,,,,0,,136
+138,删除定时任务,jobs:delete,auth,,,,0,,136
+139,修改定时任务,jobs:update,auth,,,,0,,136
+140,查询定时任务,jobs:get,auth,,,,0,,136
+141,IP分组修改,,path-1,/view/system/groups-setting.html,,,3,,114
+142,应用配置,,path-1,/view/system/app-settings.html,,,4,,114
+143,新增应用配置,app_config:add,auth,,,,0,,142
+144,删除应用配置,app_config:delete,auth,,,,0,,142
+145,修改应用配置,app_config:update,auth,,,,0,,142
+146,查询应用配置,app_config:get,auth,,,,0,,142
+147,日志,,path-1,view/system/app-log.html,,,5,,114
+148,关于,,path-1,/view/system/app-about.html,,,6,,114

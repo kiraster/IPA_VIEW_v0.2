@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <title>修改密码</title>
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <style>
+    .form-container {
+      padding: 20px;
+      max-width: 400px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layui-container" style="padding-top: 50px;">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md4 layui-col-md-offset3">
+        <div class="form-container">
+          <form class="layui-form" lay-filter="change-pwd-form">
+            <div class="layui-form-item">
+              <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                  <i class="layui-icon layui-icon-password"></i>
+                </div>
+                <input type="password" name="old_password" value="" lay-verify="required" placeholder="旧密码"
+                  lay-reqtext="请填写旧密码" autocomplete="off" class="layui-input" lay-affix="eye">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                  <i class="layui-icon layui-icon-password"></i>
+                </div>
+                <input type="password" name="new_password" value="" lay-verify="required" placeholder="新密码"
+                  lay-reqtext="请填写新密码" autocomplete="off" class="layui-input" lay-affix="eye">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                  <i class="layui-icon layui-icon-password"></i>
+                </div>
+                <input type="password" name="confirm_password" value="" lay-verify="required" placeholder="确认新密码"
+                  lay-reqtext="请填写确认新密码" autocomplete="off" class="layui-input" lay-affix="eye">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="change-pwd-form-btn">提交确认</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    layui.use(['layer', 'form'], function () {
+      var $ = layui.$;
+      var layer = layui.layer;
+      var form = layui.form;
+
+      form.on('submit(change-pwd-form-btn)', function (data) {
+        //  Ajax 操作
+        $.ajax({
+          url: '/api/v1/user/pwd',
+          type: 'PATCH',
+          contentType: "application/json",
+          dataType: 'json',
+          data: JSON.stringify(data.field),
+          success: function (response) {
+            if (response.success) {
+              layer.msg(response.message, { icon: 1 });
+              // 自动退出登陆
+              // $.ajax({
+              //   type: "GET",
+              //   url: "/api/v1/logout",
+              //   success: function (response) {
+              //     layer.msg(response.message, { icon: 1 });
+              //     if (response.code === 0) {
+              //       localStorage.removeItem("access_token");
+              //       localStorage.removeItem("refresh_token");
+              //       setTimeout(function () {
+              //         location.href = "/view/login.html";
+              //       }, 1000);
+              //     }
+              //   },
+              // });
+
+              // // 清空 tabs 缓存
+              // return new Promise((resolve) => {
+              //   resolve(true);
+              // });
+            } else {
+              layer.msg(response.message, { icon: 2 });
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        })
+        return false; // 阻止默认 form 跳转
+
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>登录</title>
+  <link rel="stylesheet" href="/static/component/pear/css/pear.css" />
+  <link rel="stylesheet" href="/static/admin/css/other/login.css" />
+  <link rel="stylesheet" href="/static/admin/css/variables.css" />
+</head>
+
+<body>
+  <div class="login-page">
+    <div class="layui-row">
+      <div class="layui-col-sm6 login-bg">
+        <img class="login-bg-img" src="/static/admin/images/banner2.svg" alt="" />
+      </div>
+      <div class="layui-col-sm6 login-form">
+        <div class="layui-form">
+          <div class="form-center">
+            <div class="form-center-box">
+              <div class="top-log-title">
+                <!--                  logo图片载入-->
+                <!--                  <img-->
+                <!--                    class="top-log"-->
+                <!--                    src="https://i.loli.net/2021/01/07/3QPxsiBTXovkdqt.png"-->
+                <!--                    alt=""-->
+                <!--                  />-->
+                <span>IP地址管理平台v0.2</span>
+              </div>
+              <div class="top-desc">
+                基于SNMP轮询的IP地址管理检测平台
+              </div>
+              <div style="margin-top: 30px">
+                <div class="layui-form-item">
+                  <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                      <i class="layui-icon layui-icon-username"></i>
+                    </div>
+                    <input lay-verify="required" placeholder="用户名" autocomplete="off" name="username" value=""
+                      class="layui-input" />
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                      <i class="layui-icon layui-icon-password"></i>
+                    </div>
+                    <input type="password" name="password" value="" lay-verify="required|confirmPassword"
+                      placeholder="密码" autocomplete="off" class="layui-input" lay-affix="eye" />
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <div class="remember-passsword">
+                    <div class="remember-cehcked">
+                      <input type="checkbox" name="like1[write]" lay-skin="primary" title="自动登录" checked />
+                    </div>
+                  </div>
+                </div>
+                <div class="login-btn">
+                  <button type="button" lay-submit lay-filter="login-in" class="layui-btn login">
+                    登 录
+                  </button>
+                </div>
+                <div class="other-login">
+                  <div class="other-login-methods">其他方式</div>
+                  <a class="greenText" href="/view/register.html">注册账号</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 资 源 引 入 -->
+  <script src="/static/component/layui/layui.js"></script>
+  <script src="/static/component/pear/pear.js"></script>
+  <script>
+    layui.use(["form", "button", "popup", "jquery"], function () {
+      var form = layui.form;
+      var button = layui.button;
+      var popup = layui.popup;
+      var $ = layui.jquery;
+
+      // 登 录 提 交
+      form.on("submit(login-in)", function (data) {
+        /// 验证
+
+        /// 动画
+        let btn = button.load({ elem: ".login" });
+
+        /// 登录
+        $.ajax({
+          url: "/api/v1/login",
+          type: "POST",
+          data: JSON.stringify(data.field),
+          contentType: "application/json",
+          success: function (res) {
+            localStorage.setItem("access_token", res.access_token);
+            localStorage.setItem("refresh_token", res.refresh_token);
+            btn.stop(function () {
+              popup.success("登录成功", function () {
+                location.href = "/";
+              });
+            });
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            btn.stop(function () {
+              popup.failure(XMLHttpRequest.responseJSON.message);
+            });
+          },
+        });
+        return false;
+      });
+    });
+  </script>
+</body>
+
+</html>

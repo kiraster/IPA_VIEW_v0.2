@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <title>分组信息</title>
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <!-- 方块表样式 -->
+  <style>
+    .block {
+      width: 32px;
+      height: 32px;
+      display: inline-block;
+      text-align: center;
+      line-height: 32px;
+      font-size: 15px;
+      margin: 2px;
+      background-color: red;
+    }
+
+    .green {
+      background-color: #91cc75;
+    }
+
+    .orange {
+      background-color: #fc8452;
+    }
+
+    /* .gainsboro { */
+    .yellow {
+      /* background-color: gainsboro; */
+      background-color: #fac858;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="pear-container">
+    <div class="layui-bg-gray">
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md2">
+          <div class="layui-card" style="min-height: 868px;">
+            <!-- <div class="layui-card-header">分组目录</div> -->
+            <div class="layui-card-body">
+              <div id="ID-tree-IPGroupInfo"></div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md10">
+          <div class="layui-card" style="min-height: 768px;">
+            <!-- <div class="layui-card-header">块状图和分组IP地址信息</div> -->
+            <div class="layui-card-body">
+              <svg class="group-empty" style="margin-top: 50px; margin-left: 220px; margin-bottom: 80px;" width="284"
+                height="252" viewBox="0 0 184 152" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" fillRule="evenodd">
+                  <g transform="translate(24 31.67)">
+                    <ellipse fillOpacity=".8" fill="#F5F5F7" cx="67.797" cy="106.89" rx="67.797" ry="12.668"></ellipse>
+                    <path
+                      d="M122.034 69.674L98.109 40.229c-1.148-1.386-2.826-2.225-4.593-2.225h-51.44c-1.766 0-3.444.839-4.592 2.225L13.56 69.674v15.383h108.475V69.674z"
+                      fill="#AEB8C2"></path>
+                    <path
+                      d="M101.537 86.214L80.63 61.102c-1.001-1.207-2.507-1.867-4.048-1.867H31.724c-1.54 0-3.047.66-4.048 1.867L6.769 86.214v13.792h94.768V86.214z"
+                      fill="url(#linearGradient-1)" transform="translate(13.56)"></path>
+                    <path d="M33.83 0h67.933a4 4 0 0 1 4 4v93.344a4 4 0 0 1-4 4H33.83a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z"
+                      fill="#F5F5F7"></path>
+                    <path
+                      d="M42.678 9.953h50.237a2 2 0 0 1 2 2V36.91a2 2 0 0 1-2 2H42.678a2 2 0 0 1-2-2V11.953a2 2 0 0 1 2-2zM42.94 49.767h49.713a2.262 2.262 0 1 1 0 4.524H42.94a2.262 2.262 0 0 1 0-4.524zM42.94 61.53h49.713a2.262 2.262 0 1 1 0 4.525H42.94a2.262 2.262 0 0 1 0-4.525zM121.813 105.032c-.775 3.071-3.497 5.36-6.735 5.36H20.515c-3.238 0-5.96-2.29-6.734-5.36a7.309 7.309 0 0 1-.222-1.79V69.675h26.318c2.907 0 5.25 2.448 5.25 5.42v.04c0 2.971 2.37 5.37 5.277 5.37h34.785c2.907 0 5.277-2.421 5.277-5.393V75.1c0-2.972 2.343-5.426 5.25-5.426h26.318v33.569c0 .617-.077 1.216-.221 1.789z"
+                      fill="#DCE0E6"></path>
+                  </g>
+                  <path
+                    d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z"
+                    fill="#DCE0E6"></path>
+                  <g transform="translate(149.65 15.383)" fill="#FFF">
+                    <ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815"></ellipse>
+                    <path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z"></path>
+                  </g>
+                </g>
+              </svg>
+              <!-- echarts饼图  ECharts 定义了宽高的 DOM-->
+              <div id="ip-group-echarts" style="width: 600px;height:400px;"></div>
+              <!-- 方块表 -->
+              <div class="col-md-12">
+                <div id="matrix" style="padding-bottom: 10px;"></div>
+              </div>
+              <div class="col-md-12">
+                <table class="layui-hide" id="ip-group-table" lay-filter="ip-group-table"></table>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 修改数据行表单 -->
+  <form class="layui-form" lay-filter="ip-group-table-form" id="ip-group-table-form" action=""
+    style="padding: 5px; display: none">
+    <div class="layui-form-item" style="display: none;">
+      <label class="layui-form-label">ID</label>
+      <div class="layui-input-inline layui-input-wrap">
+        <input type="text" name="id" placeholder="输入分组" lay-verify="required" disabled autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="display: none;">
+      <label class="layui-form-label">网段</label>
+      <div class="layui-input-inline layui-input-wrap">
+        <input type="text" name="network" placeholder="输入网段" lay-verify="required" disabled autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">分组</label>
+      <div class="layui-input-inline layui-input-wrap">
+        <input type="text" name="group_name" placeholder="输入分组" lay-verify="required" autocomplete="off"
+          lay-affix="clear" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">描述</label>
+      <div class="layui-input-inline layui-input-wrap">
+        <input type="text" name="desc" placeholder="输入描述" lay-verify="required" autocomplete="off" lay-affix="clear"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">用户</label>
+      <div class="layui-input-inline layui-input-wrap">
+        <input type="text" name="user" placeholder="输入用户" lay-verify="required" autocomplete="off" lay-affix="clear"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button type="submit" class="layui-btn" lay-submit lay-filter="ip-group-table-form-btn">
+          立即提交
+        </button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+  </form>
+  <script>
+    layui.use(function () {
+      var $ = layui.$;
+      var tree = layui.tree;
+      var layer = layui.layer;
+      var table = layui.table;
+      var form = layui.form;
+
+      // 在线状态列渲染
+      function render_available(d) {
+        if (d.available == true) {
+          return '<span style="background-color: green; color: white; padding: 4px 8px; border-radius: 3px;">在线</span>';
+          // return '<span class="layui-badge layui-bg-green">在线</span>';
+        } else {
+          return '<span style="background-color: orange; color: white; padding: 4px 8px; border-radius: 3px">离线</span>';
+          // return '<span class="layui-badge layui-bg-orange">离线</span>';
+        }
+      }
+
+      // 日期时间列渲染 created_at
+      function render_created_at(d) {
+        // 使用 moment 解析 ISO 8601 格式的时间字符串并格式化
+        return moment(d.created_at).format('YYYY-MM-DD HH:mm:ss');
+      }
+      // 日期时间列渲染 updated_at
+      function render_updated_at(d) {
+        // 使用 moment 解析 ISO 8601 格式的时间字符串并格式化
+        return moment(d.updated_at).format('YYYY-MM-DD HH:mm:ss');
+      }
+
+      // 初始化ECharts饼图
+      function initializeECharts(data) {
+        var data = data.data;
+        // 基于准备好的 DOM，初始化 ECharts 实例
+        var myChart = echarts.init(document.getElementById('ip-group-echarts'));
+
+        // 指定图表的配置项和数据
+        var option = {
+          title: {
+            text: data.group_name,
+            subtext: data.network,
+            left: 'center'
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left'
+          },
+          series: [
+            {
+              type: 'pie',
+              radius: '50%',
+              color: ['#91cc75', '#fc8452', '#fac858'],
+              data: [
+                { value: data.count.available_count, name: '在线: ' + data.count.available_count },
+                { value: data.count.unavailable_count, name: '离线: ' + data.count.unavailable_count },
+                { value: 254 - data.count.len_count, name: '未使用: ' + (254 - data.count.len_count) }
+              ],
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        };
+
+        // 使用指定的配置项和数据显示图表
+        // myChart.setOption(option);
+        option && myChart.setOption(option);
+        // // 调用函数，初始化图表
+        // initializeECharts('ip-group-echarts');
+      }
+
+      // 方块表
+      function generateBlocks(data) {
+        var data = data.data;
+        var data = data.ip_available;
+        var matrix = document.getElementById('matrix');
+        matrix.innerHTML = ''; // 清空
+
+        for (var i = 1; i <= 254; i++) {
+          var block = document.createElement('div');
+          block.classList.add('block');
+          block.innerText = i;
+
+          var found = false;
+          for (var j = 0; j < data.length; j++) {
+            var lastDigits = data[j].ip.split('.').pop();
+            if (parseInt(lastDigits) === i && data[j].available) {
+              block.classList.add('green');
+              found = true;
+              break;
+            } else if (parseInt(lastDigits) === i && !data[j].available) {
+              block.classList.add('orange');
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            block.classList.add('yellow');
+          }
+          matrix.appendChild(block);
+        }
+      }
+
+      // 表格渲染函数，支持传递参数
+      function renderTable(data) {
+        layui.use(function () {
+          table.render({
+            elem: "#ip-group-table",
+            id: "ip-group-table",
+            // height: "full-35", // 注释表示采用默认值，自适应
+            toolbar: 'default',
+            // toolbar: true, // 仅开启工具栏右侧，不显示左侧模板
+            data: data.data.group_data,
+            // page: true,
+            page: {
+              limit: 20, //每页显示20行数据
+            },
+            cols: [
+              [
+                { type: 'checkbox', fixed: 'left' },  //开启复选框
+                { field: "id", title: "ID", sort: true, minWidth: 80, maxWidth: 120, align: 'center' }, // , fixed: "left" 横向滚动冻结列
+                { field: "ip", title: "IP地址", sort: true, width: 140, align: 'center' }, // , fixed: "left" 横向滚动冻结列
+                { field: "mask", title: "子网掩码", sort: true, width: 140, align: 'center' },
+                { field: "mac_add", title: "MAC地址", sort: true, width: 140, align: 'center' },
+                { field: "network", title: "网络", sort: true, width: 140, align: 'center' },
+                { field: "system_name", title: "接入设备", sort: true, width: 180, align: 'center' },
+                { field: "vlan", title: "Vlan", sort: true, width: 80, align: 'center' },
+                { field: "port_name", title: "端口", sort: true, width: 180, align: 'center' },
+                { field: "group_name", title: "分组", sort: true, width: 180, align: 'center' },
+                { field: "available", title: "在线状态", sort: true, width: 110, align: 'center', templet: render_available },
+                { field: "snmp_host", title: "交换机地址", sort: true, width: 140, align: 'center' },
+                { field: "desc", title: "描述", sort: true, width: 180, align: 'center' },
+                { field: "user", title: "用户", sort: true, width: 180, align: 'center' },
+                { field: "created_at", title: "创建时间", sort: true, width: 180, align: 'center', templet: render_created_at },
+                { field: "updated_at", title: "更新时间", sort: true, width: 180, align: 'center', templet: render_updated_at },
+              ],
+            ],
+          });
+        });
+      }
+
+      // 定义 AJAX 请求函数，接受额外参数
+      function fetchData(data, callback) {
+        $.ajax({
+          url: '/api/v1/groups/pie',
+          method: 'GET',
+          data: data,
+          success: function (response) {
+            if (response.success) {
+              // layer.msg(response.message, { icon: 1});
+              // 调用回调函数并传递数据
+              callback(response);
+            } else {
+              layer.msg(response.message, { icon: 2 });
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        });
+      }
+
+      // 定义三合一处理函数
+      function processFetchedData(data) {
+
+        // 隐藏svg图形
+        $('.group-empty').hide();
+
+        initializeECharts(data);
+        generateBlocks(data);
+        renderTable(data);
+      }
+
+      // 头部工具栏事件
+      table.on('toolbar(ip-group-table)', function (obj) {
+        var options = obj.config; // 获取当前表格属性配置项
+        var checkStatus = table.checkStatus(options.id); // 获取选中行相关数据
+        var selectedData = checkStatus.data; // 获取选中行的数据数组
+        var row_length = selectedData.length; // 选中行数量，可作为是否有选中行的条件
+
+        // 根据不同的事件名进行相应的操作
+        switch (obj.event) { // 对应模板元素中的 lay-event 属性值
+          case 'add':
+            layer.msg('添加功能已禁用，由后台定时轮询任务更新数据');
+            break;
+          case 'delete':
+            // 判断是否选中行，然后执行删除操作
+            if (row_length > 0) {
+              // 弹出确认对话框
+              layer.confirm('确定要删除吗？', {
+                title: '删除确认',
+                // btn: ['确定', '取消'], // 按钮
+                icon: 3 // 询问图标
+              }, function () {
+                // 确定按钮的回调函数
+                // 关闭对话框
+                layer.close();
+                // 提取 ID 并准备数据
+                var idsToDelete = selectedData.map(function (row) {
+                  return row.id;
+                });
+                var loadIndex = layer.load(0);
+
+                // 执行删除操作，发起 AJAX 请求
+                $.ajax({
+                  url: `/api/v1/ips`,
+                  type: "DELETE",
+                  contentType: "application/json",
+                  // headers: {
+                  //   "X-CSRF-TOKEN": getCookie("csrf_access_token"),
+                  // },
+                  data: JSON.stringify({ ids: idsToDelete }),
+                  success: function (response) {
+                    if (response.success) {
+                      layer.msg(response.message, { icon: 1 });
+                      table.reload('ip-group-table');
+                    } else {
+                      layer.msg(response.message, { icon: 2 });
+                    }
+                  },
+                  error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+                    layer.msg('错误: ' + errorMessage, { icon: 2 });
+                  }
+                });
+                setTimeout(function () {
+                  layer.close(loadIndex); // 关闭加载弹层
+                }, 3000);
+              }, function () {
+                layer.close();
+              });
+            } else {
+              layer.msg('没有选中行');
+            }
+            break;
+          case 'update':
+            // layer.msg('编辑');
+            if (row_length === 1) {
+              var data_row = selectedData[0];
+              form.val("ip-group-table-form", {
+                "id": data_row.id,
+                "network": data_row.network,
+                "group_name": data_row.group_name,
+                "desc": data_row.desc,
+                "user": data_row.user,
+              });
+              layer.open({
+                title: '编辑行: ' + data_row.ip,
+                type: 1,
+                shade: false,
+                content: $("#ip-group-table-form"),
+                area: ["350px", "340px"], //弹出层尺寸
+              });
+              form.render($("#ip-group-table-form"));
+            } else if (row_length > 1) {
+              layer.msg('选中行数大于1');
+            } else {
+              layer.msg('没有选中行');
+            }
+            break;
+        };
+      });
+
+      // 提交修改信息
+      form.on("submit(ip-group-table-form-btn)", function (data) {
+        var field = data.field;
+        var loadIndex = layer.load(0);
+        $.ajax({
+          url: '/api/v1/ips/' + field.id,
+          type: 'PATCH',
+          contentType: "application/json",
+          data: JSON.stringify(field),
+          success: function (response) {
+            if (response.success) {
+              layer.closeAll();
+              table.reloadData('ip-group-table');
+              layer.msg(response.message, { icon: 1 });
+              $('#ip-group-table-form')[0].reset();
+            } else {
+              layer.msg(response.message, { icon: 2 });
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        });
+        setTimeout(function () {
+          layer.close(loadIndex); // 关闭加载弹层
+        }, 3000);
+        return false;
+      });
+
+      // 发起 AJAX 请求获取tree data 数据
+      $.ajax({
+        url: '/api/v1/groups/tree',  // 后端接口 URL
+        method: 'GET',
+        success: function (response) {
+          if (response.success) {
+            // layer.msg(response.message, { icon: 1});
+            var data = response.data;
+            tree.render({
+              elem: '#ID-tree-IPGroupInfo',
+              id: 'ID-tree-IPGroupInfo',
+              data: data,
+              showLine: true,  // 是否开启连接线
+              showCheckbox: true,
+              click: function (obj) {  // 点击节点的回调函数，点击请求数据渲染右侧内容
+
+                // 判断节点下无子节点，执行回调函数
+                if (!obj.data.children) {
+                  tree.reload('ID-tree-IPGroupInfo');
+                  tree.setChecked('ID-tree-IPGroupInfo', [obj.data.title]); // 批量勾选 id 为 1,3 的节点
+
+                  // 删除title键值
+                  delete obj.data.title;
+                  // 调用 fetchGroupData 并传递回调函数 initializeECharts
+                  // fetchData(obj.data, initializeECharts)
+                  // fetchData(obj.data, generateBlocks)
+                  // fetchData(obj.data, renderTable)
+                  // 调用 fetchData 并在成功回调中处理数据
+                  fetchData(obj.data, function (fetchedData) {
+                    processFetchedData(fetchedData);
+                  });
+                }
+              }
+            });
+            // 设置对应 id 的节点选中
+            // tree.setChecked('ID-tree-IPGroupInfo', ["192.168.100.0/24"]); // 批量勾选 id 为 1,3 的节点
+          } else {
+            layer.msg(response.message, { icon: 2 });
+          }
+        },
+        error: function (xhr, status, error) {
+          var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+          layer.msg('错误: ' + errorMessage, { icon: 2 });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

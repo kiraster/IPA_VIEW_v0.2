@@ -1,0 +1,15 @@
+{
+  "REFRESH_TIME": 30,
+  "SNMP_DATA_GW": [
+    {
+      "snmp_host": "1.1.1.1",
+      "snmp_community": "public"
+    }
+  ],
+  "SNMP_DATA_ACC": [
+    {
+      "snmp_host": "1.1.1.2",
+      "snmp_community": "public"
+    }
+  ]
+}

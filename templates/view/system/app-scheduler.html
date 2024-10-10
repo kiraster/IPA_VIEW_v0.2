@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <title>定时任务</title>
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+
+<body class="pear-container">
+  <div style="padding: 16px">
+    <div class="layui-card">
+      <div class="layui-card-body">
+        <table class="layui-hide" id="job-table" lay-filter="job-table"></table>
+      </div>
+    </div>
+  </div>
+  <!-- 添加数据行表单 -->
+  <form class="layui-form" lay-filter="add-job-table-form" id="add-job-table-form" action=""
+    style="padding: 25px; display: none">
+    <div class="layui-form-item">
+      <label class="layui-form-label">ID</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="id" placeholder="(必填): 字符串类型，不能重复" lay-verify="required" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">名称</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="name" placeholder="(可选): 若无输入内容值为ID值" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">函数</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="func" placeholder="(必填): 填写函数名, 先在tasks.py文件编写" lay-verify="required"
+          autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">状态</label>
+      <div class="layui-input-block">
+        <input type="checkbox" name="next_run_time" value="1" lay-skin="switch" checked lay-text="运行|暂停"
+          lay-filter="form-status-filter">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">触发器类型</label>
+      <div class="layui-input-block">
+        <input type="radio" name="trigger_type" value="interval" title="IntervalTrigger"
+          lay-filter="form-triggertype-filter" checked />
+        <input type="radio" name="trigger_type" value="cron" title="CronTrigger" lay-filter="form-triggertype-filter" />
+        <input type="radio" name="trigger_type" value="date" title="DateTrigger" lay-filter="form-triggertype-filter" />
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">间隔时间</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="seconds" placeholder="(必填): 单位 秒" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="display: none">
+      <label class="layui-form-label">相对时间</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="cron_data" placeholder="(必填): 复杂难度满天星，不想玩" disabled autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="display: none">
+      <label class="layui-form-label">固定时间</label>
+      <div class="layui-input-inline layui-input-wrap">
+        <input type="text" name="run_date" class="layui-input" id="run-date-laydate" placeholder="(必填): 固定时间执行">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">最大实例数</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="max_instances" placeholder="(可选): 默认值(64)为配置文件里定义的值" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">misfire</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="misfire_grace_time" placeholder="(可选): 默认值(1),对CronTrigger不起作用" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button type="submit" class="layui-btn" lay-submit lay-filter="add-job-table-form-btn">
+          立即提交
+        </button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+  </form>
+  <!-- 编辑数据行表单 -->
+  <form class="layui-form" lay-filter="update-job-table-form" id="update-job-table-form" action=""
+    style="padding: 25px; display: none">
+    <div class="layui-form-item">
+      <label class="layui-form-label">ID</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="id" placeholder="(必填): 字符串类型，不能重复" lay-verify="required" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">名称</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="name" placeholder="(可选): 若无输入内容值为ID值" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">函数</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="func" placeholder="(必填): 填写函数名, 先在tasks.py文件编写" lay-verify="required"
+          autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">状态</label>
+      <div class="layui-input-block">
+        <input type="checkbox" name="next_run_time" value="1" lay-skin="switch" checked lay-text="运行|暂停"
+          lay-filter="form-status-filter">
+      </div>
+    </div>
+    <div class="layui-form-item" id="trigger-div">
+      <label class="layui-form-label">触发器类型</label>
+      <div class="layui-input-block">
+        <input type="radio" name="trigger_type" value="interval" title="IntervalTrigger"
+          lay-filter="form-triggertype-filter" checked />
+        <input type="radio" name="trigger_type" value="cron" title="CronTrigger" lay-filter="form-triggertype-filter" />
+        <input type="radio" name="trigger_type" value="date" title="DateTrigger" lay-filter="form-triggertype-filter" />
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">间隔时间</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="seconds" placeholder="(必填): 单位 秒" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="display: none">
+      <label class="layui-form-label">相对时间</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="cron_data" placeholder="(必填): 复杂难度满天星，不想玩" disabled autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item" style="display: none">
+      <label class="layui-form-label">固定时间</label>
+      <div class="layui-input-inline layui-input-wrap">
+        <input type="text" name="run_date" class="layui-input" id="run-date-laydate" placeholder="(必填): 固定时间执行">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">最大实例数</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="max_instances" placeholder="(可选): 默认值(64)为配置文件里定义的值" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">misfire</label>
+      <div class="layui-input-inline layui-input-wrap" style="width: 400px;">
+        <input type="text" name="misfire_grace_time" placeholder="(可选): 默认值(1),对CronTrigger不起作用" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button type="submit" class="layui-btn" lay-submit lay-filter="update-job-table-form-btn">
+          立即提交
+        </button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+  </form>
+  <script>
+    layui.use(function () {
+      var table = layui.table;
+      var $ = layui.$;
+      var form = layui.form;
+      var laydate = layui.laydate;
+      var tree = layui.tree;
+      var layer = layui.layer;
+      var laydate = layui.laydate;
+      var popup = layui.popup;
+
+
+      // 定义 render_func 函数
+      function render_func(d) {
+        var func = d.func.split(':').pop();
+        return func
+      }
+
+      // 日期时间列渲染 start_date
+      function render_start_date(d) {
+        // 使用 moment 解析 ISO 8601 格式的时间字符串并格式化
+        return moment(d.start_date).format('YYYY-MM-DD HH:mm:ss');
+      }
+
+      // 日期时间列渲染 next_run_time
+      function render_next_run_time(d) {
+        // 判断 next_run_time 是否为 None
+        if (d.next_run_time === null || d.next_run_time === undefined) {
+          return "Null";
+        }
+        // 使用 moment 解析 ISO 8601 格式的时间字符串并格式化
+        return moment(d.next_run_time).format('YYYY-MM-DD HH:mm:ss');
+      }
+
+      // 定义 render_status 函数
+      function render_status(d) {
+        return `
+          <input type="checkbox" name="enable" value="${d.id}" lay-skin="switch" 
+            lay-filter="status-switch" ${d.next_run_time != null ? 'checked' : ''}>
+        `;
+      }
+
+      // 定义间隔时间参数返回函数
+      function render_interval_time(d) {
+        // 创建一个变量用于存储总秒数
+        let totalSeconds = 0;
+
+        // 将各个时间单位转换为秒并累加
+        if (d.weeks !== undefined) totalSeconds += d.weeks * 7 * 24 * 60 * 60; // 1周 = 7天 = 7*24*60*60秒
+        if (d.days !== undefined) totalSeconds += d.days * 24 * 60 * 60; // 1天 = 24小时 = 24*60*60秒
+        if (d.hours !== undefined) totalSeconds += d.hours * 60 * 60; // 1小时 = 60*60秒
+        if (d.minutes !== undefined) totalSeconds += d.minutes * 60; // 1分钟 = 60秒
+        if (d.seconds !== undefined) totalSeconds += d.seconds; // 秒
+
+        // 返回总秒数
+        return totalSeconds > 0 ? `${totalSeconds}` : 'Null';
+      }
+
+      // 日期时间选择器 - run_data
+      laydate.render({
+        elem: '#run-date-laydate',
+        type: 'datetime',
+        fullPanel: true // 2.8+
+      });
+
+      // 触发器类型单选切换输入框
+      form.on("radio(form-triggertype-filter)", function (data) {
+        var elem = data.elem;
+        var value = elem.value;
+
+        switch (value) {
+          case "interval":
+            $('[name="seconds"]').parent().parent().show();
+            $('[name="cron_data"]').parent().parent().hide();
+            $('[name="run_date"]').parent().parent().hide();
+            break;
+          case "cron":
+            $('[name="seconds"]').parent().parent().hide();
+            $('[name="cron_data"]').parent().parent().show();
+            $('[name="run_date"]').parent().parent().hide();
+            break;
+          case "date":
+            $('[name="seconds"]').parent().parent().hide();
+            $('[name="cron_data"]').parent().parent().hide();
+            $('[name="run_date"]').parent().parent().show();
+            break;
+        }
+      });
+
+      // 表格渲染
+      table.render({
+        elem: "#job-table",
+        id: "job-table",
+        url: "/api/v1/scheduler/jobs",
+        // height: "full-35", // 注释表示采用默认值，自适应
+        // toolbar: "#ip-table-toolbar", // 自定义toolbar
+        toolbar: 'default',
+        // toolbar: true, // 仅开启工具栏右侧，不显示左侧模板
+        // page: true,
+        page: {
+          limit: 20, //每页显示20行数据
+        },
+        cols: [
+          [
+            { type: 'checkbox' },
+            { title: 'ID', field: 'id', align: 'center', width: 60, sort: true },
+            { title: '名称', field: 'name', align: 'center' },
+            { title: '函数', field: 'func', align: 'center', templet: render_func },
+            { title: '开始时间', field: 'start_date', align: 'center', templet: render_start_date },
+            { title: '下一次运行时间', field: 'next_run_time', align: 'center', templet: render_next_run_time },
+            { title: '状态', field: 'next_run_time', align: 'center', templet: render_status },
+            { title: '类型', field: 'trigger', align: 'center' },
+            { title: '间隔时间(秒)', field: 'seconds', align: 'center', templet: render_interval_time },
+            { title: '最大实例数', field: 'max_instances', align: 'center' },
+            { title: 'misfire_grace_time', field: 'misfire_grace_time', align: 'center' }
+          ],
+        ],
+      });
+
+      // 头部工具栏事件
+      table.on('toolbar(job-table)', function (obj) {
+        var options = obj.config; // 获取当前表格属性配置项
+        var checkStatus = table.checkStatus(options.id); // 获取选中行相关数据
+        var selectedData = checkStatus.data; // 获取选中行的数据数组
+        var row_length = selectedData.length; // 选中行数量，可作为是否有选中行的条件
+
+        // 根据不同的事件名进行相应的操作
+        switch (obj.event) { // 对应模板元素中的 lay-event 属性值
+          case 'add':
+            layer.open({
+              title: '添加行',
+              type: 1,
+              shade: false,
+              content: $("#add-job-table-form"),
+              area: ["600px", "630px"], //弹出层尺寸
+            });
+            form.render($("#add-job-table-form"));
+            break;
+          case 'delete':
+            // 判断是否选中行，然后执行删除操作
+            if (row_length > 0) {
+              // 弹出确认对话框
+              layer.confirm('确定要删除吗？', {
+                title: '删除确认',
+                // btn: ['确定', '取消'], // 按钮
+                icon: 3 // 询问图标
+              }, function () {
+                // 确定按钮的回调函数
+                // 关闭对话框
+                layer.close();
+                // 提取 ID 并准备数据
+                var idsToDelete = selectedData.map(function (row) {
+                  return row.id;
+                });
+
+                // 执行删除操作，发起 AJAX 请求
+                $.ajax({
+                  url: `/api/v1/scheduler/jobs`,
+                  type: "DELETE",
+                  contentType: "application/json",
+                  // headers: {
+                  //   "X-CSRF-TOKEN": getCookie("csrf_access_token"),
+                  // },
+                  data: JSON.stringify({ ids: idsToDelete }),
+                  success: function (response) {
+                    if (response.success) {
+                      layer.msg(response.message, { icon: 1 });
+                      table.reloadData('job-table');
+                    } else {
+                      layer.msg(response.message, { icon: 2 });
+                    }
+                  },
+                  error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+                    layer.msg('错误: ' + errorMessage, { icon: 2 });
+                  }
+                });
+              }, function () {
+                // 关闭对话框
+                layer.close();
+              });
+            } else {
+              layer.msg('没有选中行');
+            }
+            break;
+          case 'update':
+            if (row_length === 1) {
+              var data_row = selectedData[0];
+              form.val("update-job-table-form", {
+                "id": data_row.id,
+                "name": data_row.name,
+                "func": render_func(data_row),
+                "next_run_time": data_row.next_run_time,
+                "seconds": render_interval_time(data_row),
+                "trigger_type": data_row.trigger,
+                "max_instances": data_row.max_instances,
+                "misfire_grace_time": data_row.misfire_grace_time,
+              });
+              layer.open({
+                title: '编辑行   ID: ' + data_row.id + '    ' + '名称: ' + data_row.name,
+                type: 1,
+                shade: false,
+                content: $("#update-job-table-form"),
+                area: ["600px", "530px"], //弹出层尺寸
+              });
+              form.render($("#update-job-table-form"));
+              // 根据触发器类型隐藏或显示元素
+              if (data_row.trigger === 'interval') {
+                $('[name="trigger_type"]').parent().parent().hide();
+                $('[name="seconds"]').parent().parent().show();
+                $('[name="cron_data"]').parent().parent().hide();
+                $('[name="run_date"]').parent().parent().hide();
+              } else if (data_row.trigger === 'cron') {
+                $('[name="trigger_type"]').parent().parent().parent().hide();
+              } else {
+                $('[name="trigger_type"]').parent().parent().hide();
+                $('[name="seconds"]').parent().parent().hide();
+                $('[name="cron_data"]').parent().parent().hide();
+                $('[name="run_date"]').parent().parent().show();
+              }
+            } else if (row_length > 1) {
+              layer.msg('选中行数大于1');
+            } else {
+              layer.msg('没有选中行');
+            }
+            break;
+        };
+      });
+
+      // 提交新增信息
+      form.on("submit(add-job-table-form-btn)", function (data) {
+        var field = data.field;
+        $.ajax({
+          url: '/api/v1/scheduler/jobs',
+          type: 'POST',
+          contentType: "application/json",
+          data: JSON.stringify(field),
+          success: function (response) {
+            if (response.success) {
+              layer.msg(response.message, { icon: 1 });
+              layer.closeAll();
+              table.reloadData('job-table');
+              $('#add-job-table-form')[0].reset();
+              $('[name="trigger_type"]').parent().parent().show();
+            } else {
+              layer.msg(response.message, { icon: 2 });
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        });
+        return false;
+      });
+
+      // 提交修改信息
+      form.on("submit(update-job-table-form-btn)", function (data) {
+        var field = data.field;
+        $.ajax({
+          url: '/api/v1/scheduler/jobs/' + field.id,
+          type: 'PATCH',
+          contentType: "application/json",
+          data: JSON.stringify(field),
+          success: function (response) {
+            if (response.success) {
+              layer.closeAll();
+              table.reloadData('job-table');
+              layer.msg(response.message, { icon: 1 });
+              $('#update-job-table-form')[0].reset();
+              $('[name="trigger_type"]').parent().parent().show();
+            } else {
+              layer.msg(response.message, { icon: 2 });
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        });
+        return false;
+      });
+
+      // 监听 switch 的变化
+      form.on('switch(status-switch)', function (obj) {
+        let switch_action = obj.elem.checked ? 'resume' : 'pause'; // 判断是启用还是禁用
+        let loading = layer.load(); // 显示加载层
+
+        $.ajax({
+          url: '/api/v1/scheduler/jobs/' + this.value + '/' + switch_action,
+          data: JSON.stringify({ id: this.value }), // 获取当前 switch 的 value 值
+          dataType: 'json',
+          contentType: 'application/json',
+          type: 'PATCH',
+          success: function (response) {
+            layer.close(loading); // 关闭加载层
+            if (response.success) {
+              layer.msg(response.message, { icon: 1 }); // 显示成功消息
+              // layer.msg(response.message);
+              table.reloadData('job-table');
+            } else {
+              layer.msg(response.message, { icon: 2 });
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        });
+      });
+    })
+  </script>
+</body>
+
+</html>

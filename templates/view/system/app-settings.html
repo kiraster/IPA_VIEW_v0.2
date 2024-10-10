@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <title>应用配置</title>
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+
+<body>
+  <div class="layui-container" style="padding-top: 16px;">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <fieldset class="layui-elem-field">
+            <legend>基本配置</legend>
+            <div class="layui-field-box">
+              <form class="layui-form">
+                <!-- <div class="layui-form-item">
+                  <label class="layui-form-label" style="width: 150px;">平台名称</label>
+                  <div class="layui-input-inline layui-input-wrap">
+                    <input type="text" name="title" autocomplete="off" lay-affix="clear" class="layui-input" disabled>
+                  </div>
+                </div> -->
+                <div class="layui-form-item">
+                  <label class="layui-form-label" style="width: 150px;">token有效期</label>
+                  <div class="layui-input-inline layui-input-wrap">
+                    <input type="number" name="token_time" lay-affix="number" class="layui-input" disabled>
+                  </div>
+                  <div class="layui-form-mid layui-text-em">默认JWT的访问令牌将在 N 天后过期</div>
+                </div>
+                <div class="layui-form-item">
+                  <div class="layui-input-block" style="margin-left: 180px;">
+                    <button type="submit" class="layui-btn layui-btn-sm" lay-submit lay-filter="base-submit"
+                      disabled>立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm" disabled>重置</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </fieldset>
+          <fieldset class="layui-elem-field">
+            <legend>SNMP参数配置</legend>
+            <div class="layui-field-box">
+              <form class="layui-form">
+                <div class="layui-form-item">
+                  <label class="layui-form-label" style="width: 150px;">间隔时间</label>
+                  <div class="layui-input-inline layui-input-wrap">
+                    <input type="number" name="refresh_time" lay-affix="number" step="1" min="10" max="100000"
+                      class="layui-input">
+                  </div>
+                  <div class="layui-form-mid layui-text-em">判断IP地址是否离线,当IP地址最后更新时间 小于 [当前时间 - 设定的值(单位 分钟)],判定IP地址离线
+                  </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                  <label class="layui-form-label" style="width: 150px;">网关交换机轮询地址<span class="icon-container"
+                      data-content="提示" lay-on="gw-tips-right">
+                      <i class="layui-icon layui-icon-question"></i>
+                    </span></label>
+                  <div class="layui-input-block" style="margin-left: 180px;">
+                    <textarea id="snmp_data_gw" style="width: 768px;" name="snmp_data_gw" placeholder="格式: 单行输入，冒号分隔；例如: 1.1.1.1:public"
+                      placeholder="网关交换机地址" class="layui-textarea"></textarea>
+                  </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                  <label class="layui-form-label" style="width: 150px;">接入交换机轮询地址<span class="icon-container"
+                      data-content="提示" lay-on="acc-tips-right">
+                      <i class="layui-icon layui-icon-question"></i>
+                    </span></label>
+                  <div class="layui-input-block" style="margin-left: 180px;">
+                    <textarea id="snmp_data_acc" style="width: 768px;" name="snmp_data_acc" placeholder="格式: 单行输入，冒号分隔；例如: 1.1.1.2:public"
+                      placeholder="接入交换机地址" class="layui-textarea"></textarea>
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <div class="layui-input-block" style="margin-left: 180px;">
+                    <button type="submit" class="layui-btn layui-btn-sm" lay-submit
+                      lay-filter="snmp-submit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </fieldset>
+          <fieldset class="layui-elem-field">
+            <legend>定时任务参数默认配置</legend>
+            <div class="layui-field-box">
+              <form class="layui-form">
+                <div class="layui-form-item">
+                  <label class="layui-form-label" style="width: 150px;">合并任务<span class="icon-container"
+                      data-content="提示" lay-on="coalesce-tips-right">
+                      <i class="layui-icon layui-icon-question"></i>
+                    </span></label>
+                  <div class="layui-input-inline layui-input-wrap">
+                    <input type="checkbox" name="coalesce" lay-skin="switch" lay-filter="switchTest" title="True|False">
+                  </div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label" style="width: 150px;">max_instances</label>
+                  <div class="layui-input-inline layui-input-wrap">
+                    <input type="number" name="max_instances" lay-affix="number" class="layui-input">
+                  </div>
+                  <div class="layui-form-mid layui-text-em">设置同一个任务同一时间最多只能有 N 个实例在运行</div>
+                </div>
+                <div class="layui-form-item">
+                  <label class="layui-form-label" style="width: 150px;">misfire_grace_time</label>
+                  <div class="layui-input-inline layui-input-wrap">
+                    <input type="number" name="misfire_grace_time" lay-affix="number" class="layui-input">
+                  </div>
+                  <div class="layui-form-mid layui-text-em">任务错过执行的最大宽限时间（秒）</div>
+                </div>
+                <div class="layui-form-item">
+                  <div class="layui-input-block" style="margin-left: 180px;">
+                    <button type="submit" class="layui-btn layui-btn-sm" lay-submit lay-filter="demo1"
+                      disabled>立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm" disabled>重置</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </fieldset>
+          <fieldset class="layui-elem-field">
+            <legend>其他配置</legend>
+            <div class="layui-field-box">
+              修改文件
+            </div>
+          </fieldset>
+          <hr class="ws-space-16">
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    layui.use(function () {
+      var $ = layui.$;
+      var layer = layui.layer;
+      var util = layui.util;
+      var form = layui.form;
+
+      form.render('checkbox'); // 重新渲染开关
+
+      // 事件
+      util.on('lay-on', {
+        'gw-tips-right': function () {
+          layer.tips('填写网关交换机轮询地址,如果网关交换机有access接口连接设备一并填写,格式为每行一个地址+v2c只读团体字(1.1.1.1:public)', this, {
+            tips: [1, '#000']
+          });
+        },
+        'acc-tips-right': function () {
+          layer.tips('填写接入交换机轮询地址,格式为每行一个地址+v2c只读团体字(1.1.1.2:public)', this, {
+            tips: [1, '#000']
+          });
+        },
+        'coalesce-tips-right': function () {
+          layer.tips('True,任务堆积后,恢复运行的时候,会只执行一次;False,堆积任务全部执行', this, {
+            tips: [1, '#000']
+          });
+        },
+      })
+      // ajax查询渲染 基本配置 token有效期
+      $.ajax({
+        url: '/api/v1/app-settings',
+        method: 'GET',
+        success: function (response) {
+          // $('input[name="title"]').val(response.data.title);
+          $('input[name="token_time"]').val(response.data.token_time);
+          $('input[name="refresh_time"]').val(response.data.refresh_time);
+          // layer.msg(response.data.title);
+
+          // $('input[name="coalesce"]').val(response.data.coalesce);
+          $('input[name="max_instances"]').val(response.data.max_instances);
+          $('input[name="misfire_grace_time"]').val(response.data.misfire_grace_time);
+
+          // 假设 response.data 是一个布尔值
+          var isChecked = response.data.coalesce; // 直接是布尔值 true 或 false
+          // 直接修改开关状态
+          $('input[name="coalesce"]').prop('checked', isChecked);
+
+          // 触发 Layui 重新渲染
+          form.render('checkbox');
+
+          // 设置开关状态
+          // form.val('switchTest', {
+          //   'coalesce': isChecked
+          // });
+
+          // 格式化snmp_gw_data数据为每一行
+          var formattedDataGW = response.data.snmp_data_gw.map(function (item) {
+            return item.snmp_host + ":" + item.snmp_community;
+          }).join("\n");
+
+          var formattedDataACC = response.data.snmp_data_acc.map(function (item) {
+            return item.snmp_host + ":" + item.snmp_community;
+          }).join("\n");
+
+
+          // 将格式化后的数据设置到 textarea 中
+          document.getElementById('snmp_data_gw').value = formattedDataGW;
+          document.getElementById('snmp_data_acc').value = formattedDataACC;
+        },
+        error: function (xhr, status, error) {
+          var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+          layer.msg('错误: ' + errorMessage, { icon: 2 });
+        }
+      });
+
+      // ajax提交base配置
+      form.on("submit(base-submit)", function (data) {
+        var field = data.field;
+        $.ajax({
+          url: '/api/v1/app-settings/base',
+          type: 'POST',
+          contentType: "application/json",
+          // headers: {
+          //   "X-CSRF-TOKEN": getCookie("csrf_access_token"),
+          // },
+          data: JSON.stringify(field),
+          success: function (response) {
+            if (response.success) {
+              layer.msg(response.message, { icon: 1 });
+            } else {
+              layer.msg(response.message, { icon: 2 });
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        });
+        return false;
+      });
+
+      // ajax提交snmp配置
+      form.on("submit(snmp-submit)", function (data) {
+        var field = data.field;
+        $.ajax({
+          url: '/api/v1/app-settings/snmp',
+          type: 'POST',
+          contentType: "application/json",
+          // headers: {
+          //   "X-CSRF-TOKEN": getCookie("csrf_access_token"),
+          // },
+          data: JSON.stringify(field),
+          success: function (response) {
+            if (response.success) {
+              layer.msg(response.message, { icon: 1 });
+            } else {
+              layer.msg(response.message, { icon: 2 });
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        });
+        return false;
+      });
+    });
+  </script>
+</body>
+
+</html>

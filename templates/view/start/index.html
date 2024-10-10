@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <title>首页</title>
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="/static/admin/css/other/analysis.css" />
+  <style>
+    /* 定时任务滚动条 */
+    .scroll-container {
+      height: 380px;
+      /* 设置高度 */
+      overflow-y: auto;
+      /* 启用竖向滚动条 */
+      border: 0px solid #ddd;
+      /* 可选：设置边框 */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="pear-container">
+    <div class="layui-row layui-col-space10">
+      <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card top-panel">
+          <div class="layui-card-header">已知IP地址统计</div>
+          <div class="layui-card-body">
+            <div class="layui-row layui-col-space5">
+              <div class="layui-col-xs12 layui-col-md12 top-panel-number" style="color: #28333e" id="value1">
+                0
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card top-panel">
+          <div class="layui-card-header">网段统计</div>
+          <div class="layui-card-body">
+            <div class="layui-row layui-col-space5">
+              <div class="layui-col-xs12 layui-col-md12 top-panel-number" style="color: #28333e" id="value2">
+                0
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card top-panel">
+          <div class="layui-card-header">在线IP地址</div>
+          <div class="layui-card-body">
+            <div class="layui-row layui-col-space5">
+              <div class="layui-col-xs12 layui-col-md12 top-panel-number" style="color: #28333e" id="value3">
+                0
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card top-panel">
+          <div class="layui-card-header">离线IP地址</div>
+          <div class="layui-card-body">
+            <div class="layui-row layui-col-space5">
+              <div class="layui-col-xs12 layui-col-md12 top-panel-number" style="color: #28333e" id="value4">
+                0
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="layui-row layui-col-space10">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <div class="layui-row">
+              <div class="layui-col layui-col-md9">
+                <div id="onoffline-records" style="min-height: 400px; padding: 10px"></div>
+                <!-- <div id="onoffline-records" style="height: 400px; width: 1000; padding: 10px"></div> -->
+              </div>
+              <!-- 以下是第二栏右侧显示内容 -->
+              <div class="layui-col layui-col-md3 scroll-container">
+                <div style="padding: 20px 25px 0px 25px; max-height: 400px;">
+                  <div class="layui-timeline" id="timeline">
+                    <!-- 动态生成的时间轴项将插入到这里 -->
+                  </div>
+                  <!-- <div class="layui-timeline">
+                    <div class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis layui-icon-circle"></i>
+                      <div class="layui-timeline-content layui-text">
+                        <div class="layui-timeline-title">
+                          渲染内容
+                        </div>
+                      </div>
+                    </div>
+                    <div class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis layui-icon-circle"></i>
+                      <div class="layui-timeline-content layui-text">
+                        <div class="layui-timeline-title">
+                          定时轮询 已结束 2024-08-12 15:32:01
+                        </div>
+                      </div>
+                    </div>
+                    <div class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis layui-icon-circle"></i>
+                      <div class="layui-timeline-content layui-text">
+                        <div class="layui-timeline-title">
+                          定时轮询 已结束 2024-08-12 15:33:01
+                        </div>
+                      </div>
+                    </div>
+                    <div class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis layui-icon-circle"></i>
+                      <div class="layui-timeline-content layui-text">
+                        <div class="layui-timeline-title">
+                          定时轮询 错误 2024-08-12 15:34:01
+                        </div>
+                      </div>
+                    </div>
+                    <div class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis layui-icon-circle"></i>
+                      <div class="layui-timeline-content layui-text">
+                        <div class="layui-timeline-title">
+                          定时轮询 已挂起 2024-08-12 15:35:01
+                        </div>
+                      </div>
+                    </div>
+                    <div class="layui-timeline-item">
+                      <i class="layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-timeline-axis"></i>
+                      <div class="layui-timeline-content layui-text">
+                        <div class="layui-timeline-title">
+                          定时轮询 执行中 2024-08-12 15:35:01
+                        </div>
+                      </div>
+                    </div>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-md9">
+        <div class="layui-card">
+          <div class="layui-card-body">
+            <div class="layui-card-header">IP地址使用统计</div>
+            <div class="layui-card-body">
+              <div id="ip-info-echarts" style="min-height: 100px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col layui-col-md3">
+        <div class="layui-card">
+          <div class="layui-card-body" style="
+                flex-direction: column;
+                height: 160px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+            <div style="text-align: center;">
+              <img class="logo" style="width: 25%; height: auto;" src="/static/admin/images/banner2.png">
+            </div>
+            <br>
+            <div>
+              <a href="mailto:test@test.com"> &lt;测试链接&gt;</a>
+            </div>
+          </div>
+        </div>
+        <div class="layui-card">
+          <div class="layui-card-header" style="color: red; text-align: center;">《企业安全生产标准化基本规范》</div>
+          <div class="layui-card-header" style="color: red; text-align: center;">(GB/T33000-2016)</div>
+          <div class="layui-card-body" style="line-height: 40px">
+            <div style="text-align: justify; ">
+              4、一般要求
+              <br>
+              4.1 原则
+              <br>
+              企业开展安全生产标准化工作，应遵循“安全第一、预防为主、综合治理”
+              的方针，落实企业主体责任。以安全风险管理、隐患排查治理、职业病危害防治
+              为基础，以安全生产责任制为核心，建立安全生产标准化管理体系，全面提升安
+              全生产管理水平，持续改进安全生产工作，不断提升安全生产绩效，预防和减少
+              事故的发生，保障人身安全健康，保证生产经营活动的有序进行。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 请求第一栏数据并渲染
+    layui.use(["layer", "element", "echarts", "count"], function () {
+      var $ = layui.jquery,
+        layer = layui.layer,
+        element = layui.element,
+        count = layui.count,
+        echarts = layui.echarts;
+
+      // 发起 AJAX 请求
+      $.ajax({
+        url: '/api/v1/ips/statistics/overview',
+        method: 'GET',
+        success: function (response) {
+          // 转换为数字
+          var num1 = Number(response.data.unique_network_count);
+          // 进行乘法运算
+          var result = num1 * 75;
+          // 获取指定的 div 元素
+          var myDiv = document.getElementById('ip-info-echarts');
+          // 设置高度
+          myDiv.style.height = result + 'px';
+
+          // 使用 Layui 的 count.up 方法
+          count.up('value1', {
+            time: 4000,
+            num: response.data.total_count,
+            regulator: 50
+          });
+          count.up("value2", {
+            time: 4000,
+            num: response.data.unique_network_count,
+            // bit: 2,
+            regulator: 50,
+          });
+
+          count.up("value3", {
+            time: 4000,
+            num: response.data.online_status,
+            // bit: 2,
+            regulator: 50,
+          });
+
+          count.up("value4", {
+            time: 4000,
+            // bit: 2,
+            num: response.data.offline_status,
+            regulator: 50,
+          });
+        },
+        error: function (xhr, status, error) {
+          var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+          layer.msg('错误: ' + errorMessage, { icon: 2 });
+        }
+      });
+    });
+  </script>
+  <script>
+    // 请求IP地址状态数据并渲染折线图
+    layui.use(["layer", "echarts", "element"], function () {
+      var $ = layui.jquery,
+        layer = layui.layer,
+        element = layui.element,
+        echarts = layui.echarts;
+
+      var OnlineOfflinechartDom = document.getElementById('onoffline-records');
+      var OnlineOfflineRecords = echarts.init(OnlineOfflinechartDom);
+      var option;
+
+      let bgColor = "#fff";
+      // '#91cc75', '#fc8452', '#fac858'  绿 橙 黄
+      let color = [
+        // "#0090FF",
+        "#91cc75",
+        "#fc8452",
+        "#36CE9E",
+        "#FFC005",
+        "#FF515A",
+        "#8B5CFF",
+        "#00CA69"
+      ];
+
+      let echartData = [
+        {
+          time_now: '00:00:00',
+          online_status: 0,
+          offline_status: 0
+        },
+      ];
+
+      var xAxisData = echartData.map(v => v.time_now);
+      var yAxisData1 = echartData.map(v => v.online_status);
+      var yAxisData2 = echartData.map(v => v.offline_status);
+
+      const hexToRgba = (hex, opacity) => {
+        let rgbaColor = "";
+        let reg = /^#[\da-f]{6}$/i;
+        if (reg.test(hex)) {
+          rgbaColor =
+            `rgba(${parseInt("0x" + hex.slice(1, 3))},${parseInt(
+              "0x" + hex.slice(3, 5)
+            )},${parseInt("0x" + hex.slice(5, 7))},${opacity})`;
+        }
+        return rgbaColor;
+      }
+
+      option = {
+        backgroundColor: bgColor,
+        color: color,
+        title: {
+          text: '在线/离线'
+        },
+        tooltip: {
+          trigger: "axis",
+          formatter: function (params) {
+            let html = '';
+            params.forEach(v => {
+              html +=
+                `<div style="color: #666;font-size: 14px;line-height: 24px">
+                                      <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${color[v.componentIndex]};"></span>
+                                      ${v.seriesName}&nbsp;&nbsp;
+                                      <span style="color:${color[v.componentIndex]};font-weight:700;font-size: 14px">${v.value}</span>
+                                      `;
+            })
+            return html
+          },
+          extraCssText: 'background: #fff; border-radius: 0;box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);color: #333;',
+          axisPointer: {
+            type: 'shadow',
+            shadowStyle: {
+              color: '#ffffff',
+              shadowColor: 'rgba(225,225,225,1)',
+              shadowBlur: 5
+            }
+          }
+        },
+        legend: {
+          data: ['在线', '离线']
+          // right: 10,
+          // top: 10
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+          // top: 100,
+          // containLabel: true
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        xAxis: [{
+          type: "category",
+          boundaryGap: false,
+          axisLabel: {
+            formatter: '{value}',
+            textStyle: {
+              color: "#333"
+            }
+          },
+          axisLine: {
+            lineStyle: {
+              color: "#D9D9D9"
+            }
+          },
+          data: xAxisData
+        }],
+        yAxis: [{
+          type: "value",
+          // name: '单位：百分比',
+          // min: 0,
+          // max: 100,
+          interval: 20,
+          axisLabel: {
+            textStyle: {
+              color: "#666"
+            },
+            formatter: '{value}'  // 设置 Y 轴标签格式
+          },
+          nameTextStyle: {
+            color: "#666",
+            fontSize: 12,
+            lineHeight: 40
+          },
+          splitLine: {
+            lineStyle: {
+              type: "dashed",
+              color: "#E9E9E9"
+            }
+          },
+          axisLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          }
+        }],
+        series: [{
+          name: "在线",
+          type: "line",
+          smooth: true,
+          symbolSize: 8,
+          zlevel: 3,
+          lineStyle: {
+            normal: {
+              color: color[0],
+              shadowBlur: 3,
+              shadowColor: hexToRgba(color[0], 0.5),
+              shadowOffsetY: 8
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(
+                0,
+                0,
+                0,
+                1,
+                [{
+                  offset: 0,
+                  color: hexToRgba(color[0], 0.3)
+                },
+                {
+                  offset: 1,
+                  color: hexToRgba(color[0], 0.1)
+                }
+                ],
+                false
+              ),
+              shadowColor: hexToRgba(color[0], 0.1),
+              shadowBlur: 10
+            }
+          },
+          data: yAxisData1
+        }, {
+          name: '离线',
+          type: "line",
+          smooth: true,
+          symbolSize: 8,
+          zlevel: 3,
+          lineStyle: {
+            normal: {
+              color: color[1],
+              shadowBlur: 3,
+              shadowColor: hexToRgba(color[1], 0.5),
+              shadowOffsetY: 8
+            }
+          },
+          areaStyle: {
+            normal: {
+              color: new echarts.graphic.LinearGradient(
+                0,
+                0,
+                0,
+                1,
+                [{
+                  offset: 0,
+                  color: hexToRgba(color[1], 0.3)
+                },
+                {
+                  offset: 1,
+                  color: hexToRgba(color[1], 0.1)
+                }
+                ],
+                false
+              ),
+              shadowColor: hexToRgba(color[1], 0.1),
+              shadowBlur: 10
+            }
+          },
+          data: yAxisData2
+        }]
+      };
+
+      OnlineOfflineRecords.setOption(option);
+
+      // 延迟1毫秒后执行函数，在DOM元素没有明确定义宽高，图表无法加载；需要出发一次resize
+      setTimeout(OnlineOfflineRecords.resize, 1);
+
+      // 执行一次折线图请求渲染
+      setTimeout(ajaxIPStatusPolling, 100);
+
+      // 响应窗口调整大小
+      window.addEventListener('resize', OnlineOfflineRecords.resize);
+
+      // 定时 10 秒，向后端请求数据
+      setInterval(ajaxIPStatusPolling, 10000);
+
+      function ajaxIPStatusPolling() {
+        $.ajax({
+          url: "/api/v1/ips/statistics/status",
+          success: function (response) {
+            echartData.push({
+              time_now: response.data.time_now,
+              online_status: response.data.online_status,
+              offline_status: response.data.offline_status
+            });
+            if (echartData.length > 10) {
+              echartData.shift();
+            }
+
+            xAxisData = echartData.map(v => v.time_now);
+            yAxisData1 = echartData.map(v => v.online_status);
+            yAxisData2 = echartData.map(v => v.offline_status);
+
+            option.xAxis[0].data = xAxisData;
+            option.series[0].data = yAxisData1;
+            option.series[1].data = yAxisData2;
+
+            OnlineOfflineRecords.setOption(option);
+
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage);
+          }
+        })
+      }
+    });
+  </script>
+  <script>
+    // 渲染右侧时间轴
+    layui.use(function () {
+      var $ = layui.jquery;
+
+      // 日期时间列渲染 next_run_time
+      function render_next_run_time(d) {
+        // 判断 next_run_time 是否为 None
+        if (d.next_run_time === null || d.next_run_time === undefined) {
+          return "Null";
+        }
+        // 使用 moment 解析 ISO 8601 格式的时间字符串并格式化
+        return moment(d.next_run_time).format('YYYY-MM-DD HH:mm:ss');
+      }
+
+      // 延迟1毫秒后执行函数
+      setTimeout(ajaxJobstatusPolling, 1);
+
+      // 定时 10 秒，向后端请求数据
+      setInterval(ajaxJobstatusPolling, 10000);
+
+      function ajaxJobstatusPolling() {
+        $.ajax({
+          url: "/api/v1/scheduler/jobs",
+          method: 'GET',
+          success: function (response) {
+            var timelineHtml = '';
+
+            response.data.forEach(function (item) {
+              var triggerType = '';
+              switch (item.trigger) {
+                case 'interval':
+                  triggerType = '周期任务';
+                  break;
+                case 'cron':
+                  triggerType = '定时任务';
+                  break;
+                case 'date':
+                  triggerType = '一次性任务';
+                  break;
+                default:
+                  triggerType = '未知任务';
+              }
+
+              var iconClass = item.next_run_time ?
+                'layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-timeline-axis' :
+                'layui-icon layui-timeline-axis layui-icon-circle';
+
+              var nextRunTimeText = item.next_run_time ? '正在运行' : '已结束';
+
+              var next_run_time = render_next_run_time(item);
+
+              timelineHtml += `
+            <div class="layui-timeline-item">
+              <i class="layui-icon ${iconClass}"></i>
+              <div class="layui-timeline-content layui-text">
+                <h3 class="layui-timeline-title"> ${item.name} </h3>
+                <p>任务类型：${triggerType}</p>
+                <p>运行状态：${nextRunTimeText}</p>
+                <p>下一次运行时间：${next_run_time}</p>
+                </div>
+              </div>
+            </div>
+          `;
+            });
+            $('#timeline').html(timelineHtml);
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        });
+      }
+    })
+  </script>
+  <script>
+    // // var div = document.getElementById('myDiv');
+    // var myDiv = document.getElementById('ip-info-echarts');
+    // // 进行乘法运算
+    // var result = globalNum1 * 75;
+    // layer.msg("第三栏容器高度为：", globalNum1)
+    // // 获取指定的 div 元素
+    // var myDiv = document.getElementById('ip-info-echarts');
+    // // 设置高度
+    // myDiv.style.height = '600' + 'px';
+
+
+    // 请求IP地址信息并渲染第三栏横向柱形图
+    layui.use(["layer", "echarts", "element"], function () {
+      var $ = layui.jquery,
+        layer = layui.layer,
+        element = layui.element,
+        echarts = layui.echarts;
+
+      var ip_info_chartDom = document.getElementById('ip-info-echarts');
+      var ipInfoRecords = echarts.init(ip_info_chartDom);
+      var option;
+
+      let bgColor = "#fff";
+      // '#91cc75', '#fc8452', '#fac858'  绿 橙 黄
+      let color = [
+        // "#0090FF",
+        "#91cc75",
+        "#fc8452",
+        "#fac858",
+        "#FFC005",
+        "#FF515A",
+        "#8B5CFF",
+        "#00CA69"
+      ];
+
+      let echartData = [
+        {
+          group_name: '默认组',
+          true_counts: 0,
+          false_counts: 0,
+          remaining_counts: 0,
+        },
+      ];
+
+      var yAxisData = echartData.map(v => v.group_name);
+      var xAxisData1 = echartData.map(v => v.true_counts);
+      var xAxisData2 = echartData.map(v => v.false_counts);
+      var xAxisData3 = echartData.map(v => v.remaining_counts);
+
+      var option = {
+        backgroundColor: bgColor,
+        color: color,
+
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+          }
+        },
+        legend: {},
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'value',
+          interval: 20,
+          max: 255 // 设置 X 轴最大值为 255
+        },
+        yAxis: {
+          min: 0,
+          // max: 100,
+          interval: 20,
+          type: 'category',
+          data: yAxisData
+        },
+        series: [
+          {
+            name: '在线',
+            type: 'bar',
+            stack: 'total',
+            label: {
+              show: true
+            },
+            emphasis: {
+              focus: 'series'
+            },
+            data: xAxisData1
+          },
+          {
+            name: '离线',
+            type: 'bar',
+            stack: 'total',
+            label: {
+              show: true
+            },
+            emphasis: {
+              focus: 'series'
+            },
+            data: xAxisData2
+          },
+          {
+            name: '未使用',
+            type: 'bar',
+            stack: 'total',
+            label: {
+              show: true
+            },
+            emphasis: {
+              focus: 'series'
+            },
+            data: xAxisData3
+          }
+        ]
+      };
+
+      // option && ipInfoRecords.setOption(option);
+      ipInfoRecords.setOption(option);
+
+      // 延迟1毫秒后执行函数，在DOM元素没有明确定义宽高，图表无法加载；需要触发一次resize
+      setTimeout(ipInfoRecords.resize, 900);
+
+      // 响应窗口调整大小
+      window.addEventListener('resize', ipInfoRecords.resize);
+
+      // 定时 10 秒，向后端请求数据
+      // setInterval(ajaxGroupPolling, 10000);
+      ajaxGroupPolling();
+
+      function ajaxGroupPolling() {
+        $.ajax({
+
+          url: "/api/v1/ips/statistics/group",
+          success: function (response) {
+            // 清空 echartData 数组
+            echartData = [];
+
+            // 遍历数据并推送到 echartData
+            response.data.result.forEach(function (item, index) {
+              echartData.push({
+                group_name: item.group_name + ': ' + item.network,
+                true_counts: response.data.true_counts[index],
+                false_counts: response.data.false_counts[index],
+                remaining_counts: response.data.remaining_counts[index],
+              });
+            });
+
+            // if (echartData.length > 6) {
+            //     echartData.shift();
+            // }
+
+            yAxisData = echartData.map(v => v.group_name);
+            xAxisData1 = echartData.map(v => v.true_counts);
+            xAxisData2 = echartData.map(v => v.false_counts);
+            xAxisData3 = echartData.map(v => v.remaining_counts);
+
+            option.yAxis.data = yAxisData;
+            option.series[0].data = xAxisData1;
+            option.series[1].data = xAxisData2;
+            option.series[2].data = xAxisData3;
+
+            ipInfoRecords.setOption(option);
+
+          },
+          error: function (xhr, status, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+            layer.msg('错误: ' + errorMessage, { icon: 2 });
+          }
+        })
+      }
+    });
+  </script>
+</body>
+
+</html>

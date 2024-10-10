@@ -1,0 +1,4 @@
+id,nickname,username,password,mobile,email,avatar,department_id,role_ids
+1,超级管理员,admin,123456,,,,1,1
+2,普通管理员,operate,123456,,,,1,2
+3,普通用户1,user01,123456,,,,1,3
