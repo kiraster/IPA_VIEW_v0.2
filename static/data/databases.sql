@@ -1,0 +1,1 @@
+create database ipa_view character set utf8mb4;

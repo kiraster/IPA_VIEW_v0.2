@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <title>关于</title>
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <style>
+    .center-div {
+      width: 888px;
+      /* You can adjust the width */
+      margin: 0 auto;
+      text-align: left;
+      /* Center content inside the div */
+      padding: 132px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layui-panel" style="padding: 50px;">
+    <div class="layui-text" style="padding: 16px;">
+      <p><strong>开发作者:</strong> Kiraster</p>
+      <p><strong>版本:</strong> 0.2</p>
+      <p><strong>发布日期:</strong> 2024-09-05</p>
+      <p><strong>代码框架:</strong> 基于<a style="color: #01aaed;" target="_blank"
+          href="https://gitee.com/pear-admin/pear-admin-flask">pear-admin-flask</a> Python后台管理系统进行二次开发</p>
+      <p><strong>功能描述:</strong> 基于SNMP轮询的IP地址管理检测</p>
+      <p><strong>实现逻辑:</strong> 通过SNMP协议轮询交换机设备，获取ARP，MAC地址，端口类型，端口索引，系统名称，子网掩码等信息后进行逻辑判断处理</p>
+      <p><strong>感谢:</strong> <a style="color: #01aaed;" target="_blank"
+          href="https://gitee.com/pear-admin/pear-admin-flask">pear-admin-flask</a> Python 后台管理系统开源项目及其贡献者
+      </p>
+    </div>
+  </div>
+  <div class="layui-panel" style="padding: 50px;">
+    <div class="layui-text" style="padding: 16px;">
+      <h1>使用说明</h1>
+      <h2>首页</h2>
+      <h3>首页</h3>
+      <ul>
+        <li>顶栏
+          <ul>
+            <li>已知IP地址统计：显示当前数据库所有IP地址记录</li>
+            <li>网段统计：显示当前数据库所有网段记录</li>
+            <li>在线IP地址：显示当前数据库所有IP地址状态为在线记录</li>
+            <li>离线IP地址：显示当前数据库所有IP地址状态为离线记录</li>
+          </ul>
+        </li>
+        <li>第二栏
+          <ul>
+            <li>左侧折线图：显示当前数据库所有IP地址状态为在线/离线折线图，刷新间隔为10秒</li>
+            <li>右侧定时任务: 显示当前定时任务运行状态，刷新间隔为10秒</li>
+          </ul>
+        </li>
+        <li>第三栏
+          <ul>
+            <li>左侧柱形图：以分组名称和网段统计的IP地址在线/离线/空闲状态柱形图</li>
+            <li>右侧卡片: 占位显示</li>
+          </ul>
+        </li>
+      </ul>
+      <h3>系统监控</h3>
+      <ul>
+        <li>左侧栏
+          <ul>
+            <li>CPU和内存使用率：显示当前主机实时CPU和内存使用率，刷新间隔为10秒</li>
+            <li>磁盘信息：显示当前主机磁盘分区情况，页面载入时获取一次</li>
+          </ul>
+        </li>
+        <li>右侧栏
+          <ul>
+            <li>主机信息：显示当前主机信息，页面载入时获取一次</li>
+            <li>网络信息: 显示当前主机网络接收和发送流量统计信息，刷新间隔为10秒</li>
+          </ul>
+        </li>
+      </ul>
+      <h2>IP地址使用</h2>
+      <h3>IP地址信息</h3>
+      <ul>
+        <li>顶栏
+          <ul>
+            <li>搜索功能：以过滤条件+搜索关键字的形式对数据行进行模糊搜索；当前定义的过滤条件有：IP地址、网段、MAC地址、接入设备、Vlan、交换机地址、用户、描述、分组名称</li>
+            <li>IP地址信息：支持的功能：单行编辑、多行删除、过滤字段显示、导出、打印
+              <ul>
+                <li>单行添加：添加功能禁用，由后台定时任务获取更新数据</li>
+                <li>单行编辑：修改分组名称、用户、描述（其它字段内容为SNMP轮询获取）</li>
+                <li>多行删除：勾选左侧复选框后点击删除</li>
+                <li>过滤字段显示：选择表格显示的字段内容</li>
+                <li>导出：导出csv或xls文件</li>
+                <li>打印：打印机打印或虚拟打印机打印到PDF文件</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>分页器
+          <ul>
+            <li>每页显示的条数：每页显示的条数设置为20（可修改为其他值）</li>
+          </ul>
+        </li>
+      </ul>
+      <h3>分组</h3>
+      <ul>
+        <li>左侧栏
+          <ul>
+            <li>分组树：以分组名称和所属网段显示的树图
+              <ul>
+                <li>当分组下没有网段，不能打开节点</li>
+                <li>点击节点后处于勾选状态</li>
+                <li>勾选状态仅用于标识所点击的字节，不具其他功能</li>
+                <li>默认展开所有节点（修改“spread"属性进行折叠）</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>右侧栏
+          <ul>
+            <li>饼图：显示所点击节点网段的IP地址状态饼图</li>
+            <li>方块显示: 显示所点击节点网段的IP地址状态分布情况</li>
+            <li>网段IP地址信息: 显示所点击节点网段的IP地址表</li>
+          </ul>
+        </li>
+      </ul>
+      <h2>系统设置</h2>
+      <h3>账户与权限</h3>
+      <blockquote>用户管理系统（UMS）和RBAC访问权限控制</blockquote>
+      <h4>权限</h4>
+      <ul>
+        <li>权限：显示权限数据表的信息，支持在线对权限数据表的增删改查</li>
+      </ul>
+      <h4>角色</h4>
+      <ul>
+        <li>角色：显示角色数据表的信息，支持在线对角色数据表的增删改查</li>
+        <ul>
+          <li>内置超级管理员，普通管理员，普通用户三种角色</li>
+          <li>每种角色对应各自的权限</li>
+        </ul>
+      </ul>
+      <h4>部门</h4>
+      <ul>
+        <li>部门：显示部门数据表的信息，支持在线对部门数据表的增删改查</li>
+        <ul>
+          <li>内置集团总部，分支单位1结构</li>
+          <li>每个用户可对应一个部门</li>
+          <li>可删除不使用该功能</li>
+        </ul>
+      </ul>
+      <h4>用户</h4>
+      <ul>
+        <li>用户：显示用户数据表的信息，支持在线对用户数据表的增删改查</li>
+        <ul>
+          <li>内置admin超级管理员用户，默认密码123456</li>
+          <li>内置operate普通管理员用户，默认密码123456，可删除不使用</li>
+          <li>内置user01普通用户，默认密码123456，可删除不使用</li>
+        </ul>
+      </ul>
+      <h3>定时任务</h3>
+      <ul>
+        <li>定时任务：显示ap-scheduler任务存储器数据</li>
+        <ul>
+          <li>支持添加触发器为interval和date类型的定时任务</li>
+          <li>添加任务时，可选项不填写参数，使用config.py文件里定义的默认参数</li>
+          <li>date任务的下一次执行时间小于当前日期将从数据库移除</li>
+          <li>使用在线添加定时任务，需要在"pear_admin\extensions\tasks\tasks.py"文件预先编写执行函数逻辑</li>
+        </ul>
+      </ul>
+      <h3>IP分组修改</h3>
+      <ul>
+        <li>顶栏
+          <ul>
+            <li>搜索功能：以搜索关键字的形式对分组数据行进行模糊搜索</li>
+          </ul>
+        </li>
+        <li>第二栏
+          <ul>
+            <li>左侧显示分组数据表的信息，支持在线对权限数据表的增删改查</li>
+            <li>ID为1的默认组不可删除</li>
+            <li>删除非默认组时，该分组下的网段自动移动到默认组</li>
+            <li>点击表格第三栏穿梭框按钮，在右侧显示分组详情</li>
+            <li>右侧穿梭框可对网段进行加组和离组操作</li>
+          </ul>
+        </li>
+      </ul>
+      <h3>应用配置</h3>
+      <ul>
+        <li>显示当前应用的默认配置</li>
+        <ul>
+          <li>安全性问题: 在生产环境中，不建议直接暴露配置文件的读写操作</li>
+          <li>当前项目仅开放snmp轮询参数进行设置</li>
+        </ul>
+      </ul>
+      <h3>日志</h3>
+      <ul>
+        <li>显示日志文件内容</li>
+      </ul>
+      <h3>关于</h3>
+      <ul>
+        <li>当前页面，包含使用说明和应用信息</li>
+      </ul>
+      <hr>
+      <h2>登陆</h2>
+      <ul>
+        <li>登陆成功后，默认保持7天登陆状态</li>
+      </ul>
+      <h2>注册</h2>
+      <ul>
+        <li>通过页面注册的用户为普通用户</li>
+        <li>可通过管理员用户对其进行访问权限控制</li>
+      </ul>
+      <h2>简要数据库关系图</h2>
+      <h3>账户权限</h3>
+      <img src="/static/admin/images/user_right_ref.png" alt="">
+      <h3>IP与分组</h3>
+      <img src="/static/admin/images/ip_group_ref.png" alt="">
+    </div>
+  </div>
+</body>
+
+</html>

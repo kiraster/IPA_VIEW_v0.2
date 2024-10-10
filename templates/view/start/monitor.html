@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8" />
+    <title>系统监控</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+
+<body>
+    <div class="pear-container">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md8">
+                <div class="layui-row layui-col-space10">
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <!-- <div class="layui-card-header">CPU和内存使用率</div> -->
+                            <div class="layui-card-body">
+                                <div id="cpu-mem-echarts" style="min-height: 440px; padding: 10px"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">磁盘信息</div>
+                            <div class="layui-card-body">
+                                <div id="disk_partition" class="layui-row layui-col-space10">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">主机信息</div>
+                    <div class="layui-card-body">
+                        <table id="system-info-table" class="layui-table" lay-skin="line">
+                            <thead>
+                                <tr>
+                                    <th>属性</th>
+                                    <th>值</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 动态数据将被追加插入到这里 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">网卡信息</div>
+                    <div class="layui-card-body">
+                        <div id="netinfo-echarts" style="min-height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 请求CPU和内存数据并渲染
+        layui.use(["layer", "echarts", "element", "count"], function () {
+            var $ = layui.jquery,
+                layer = layui.layer,
+                element = layui.element,
+                count = layui.count,
+                echarts = layui.echarts;
+
+            var cpu_mem_chartDom = document.getElementById('cpu-mem-echarts');
+            var monnitorRecords = echarts.init(cpu_mem_chartDom);
+            var option;
+
+            let bgColor = "#fff";
+            let color = [
+                "#0090FF",
+                "#36CE9E",
+                "#FFC005",
+                "#FF515A",
+                "#8B5CFF",
+                "#00CA69"
+            ];
+
+            let echartData = [
+                {
+                    time_now: '00:00:00',
+                    cpu_percent: 0,
+                    memory_percent: 0
+                },
+            ];
+
+            var xAxisData = echartData.map(v => v.time_now);
+            var yAxisData1 = echartData.map(v => v.cpu_percent);
+            var yAxisData2 = echartData.map(v => v.memory_percent);
+
+            const hexToRgba = (hex, opacity) => {
+                let rgbaColor = "";
+                let reg = /^#[\da-f]{6}$/i;
+                if (reg.test(hex)) {
+                    rgbaColor =
+                        `rgba(${parseInt("0x" + hex.slice(1, 3))},${parseInt(
+                            "0x" + hex.slice(3, 5)
+                        )},${parseInt("0x" + hex.slice(5, 7))},${opacity})`;
+                }
+                return rgbaColor;
+            }
+
+            option = {
+                backgroundColor: bgColor,
+                color: color,
+                title: {
+                    text: 'CPU和内存使用率'
+                },
+                tooltip: {
+                    trigger: "axis",
+                    formatter: function (params) {
+                        let html = '';
+                        params.forEach(v => {
+                            html +=
+                                `<div style="color: #666;font-size: 14px;line-height: 24px">
+                                        <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${color[v.componentIndex]};"></span>
+                                        ${v.seriesName}.${v.name}
+                                        <span style="color:${color[v.componentIndex]};font-weight:700;font-size: 18px">${v.value}</span>
+                                        %`;
+                        })
+                        return html
+                    },
+                    extraCssText: 'background: #fff; border-radius: 0;box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);color: #333;',
+                    axisPointer: {
+                        type: 'shadow',
+                        shadowStyle: {
+                            color: '#ffffff',
+                            shadowColor: 'rgba(225,225,225,1)',
+                            shadowBlur: 5
+                        }
+                    }
+                },
+                legend: {
+                    data: ['CPU', '内存']
+                    // right: 10,
+                    // top: 10
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                    // top: 100,
+                    // containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: [{
+                    type: "category",
+                    boundaryGap: false,
+                    axisLabel: {
+                        formatter: '{value}',
+                        textStyle: {
+                            color: "#333"
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: "#D9D9D9"
+                        }
+                    },
+                    data: xAxisData
+                }],
+                yAxis: [{
+                    type: "value",
+                    // name: '单位：百分比',
+                    min: 0,
+                    max: 100,
+                    interval: 20,
+                    axisLabel: {
+                        textStyle: {
+                            color: "#666"
+                        },
+                        formatter: '{value}%'  // 设置 Y 轴标签格式
+                    },
+                    nameTextStyle: {
+                        color: "#666",
+                        fontSize: 12,
+                        lineHeight: 40
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            type: "dashed",
+                            color: "#E9E9E9"
+                        }
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    }
+                }],
+                series: [{
+                    name: "CPU",
+                    type: "line",
+                    smooth: true,
+                    symbolSize: 8,
+                    zlevel: 3,
+                    lineStyle: {
+                        normal: {
+                            color: color[0],
+                            shadowBlur: 3,
+                            shadowColor: hexToRgba(color[0], 0.5),
+                            shadowOffsetY: 8
+                        }
+                    },
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(
+                                0,
+                                0,
+                                0,
+                                1,
+                                [{
+                                    offset: 0,
+                                    color: hexToRgba(color[0], 0.3)
+                                },
+                                {
+                                    offset: 1,
+                                    color: hexToRgba(color[0], 0.1)
+                                }
+                                ],
+                                false
+                            ),
+                            shadowColor: hexToRgba(color[0], 0.1),
+                            shadowBlur: 10
+                        }
+                    },
+                    data: yAxisData1
+                }, {
+                    name: '内存',
+                    type: "line",
+                    smooth: true,
+                    symbolSize: 8,
+                    zlevel: 3,
+                    lineStyle: {
+                        normal: {
+                            color: color[1],
+                            shadowBlur: 3,
+                            shadowColor: hexToRgba(color[1], 0.5),
+                            shadowOffsetY: 8
+                        }
+                    },
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(
+                                0,
+                                0,
+                                0,
+                                1,
+                                [{
+                                    offset: 0,
+                                    color: hexToRgba(color[1], 0.3)
+                                },
+                                {
+                                    offset: 1,
+                                    color: hexToRgba(color[1], 0.1)
+                                }
+                                ],
+                                false
+                            ),
+                            shadowColor: hexToRgba(color[1], 0.1),
+                            shadowBlur: 10
+                        }
+                    },
+                    data: yAxisData2
+                }]
+            };
+
+            monnitorRecords.setOption(option);
+
+            // 延迟1毫秒后执行函数，在DOM元素没有明确定义宽高，图表无法加载；需要触发一次resize
+            setTimeout(monnitorRecords.resize, 1);
+
+            // 执行一次折线图请求渲染
+            setTimeout(ajaxPolling, 100);
+
+            //  响应窗口调整大小
+            window.addEventListener('resize', monnitorRecords.resize);
+
+            // 定时 10 秒，向后端请求CPU和内存数据
+            setInterval(ajaxPolling, 10000);
+
+            function ajaxPolling() {
+                $.ajax({
+                    url: "/api/v1/monitor/utilization",
+                    success: function (response) {
+                        // layer.msg(response.message, { icon: 1 });
+                        echartData.push({
+                            time_now: response.data.time_now,
+                            cpu_percent: response.data.cups_percent,
+                            memory_percent: response.data.memory_used
+                        });
+                        if (echartData.length > 10) {
+                            echartData.shift();
+                        }
+
+                        xAxisData = echartData.map(v => v.time_now);
+                        yAxisData1 = echartData.map(v => v.cpu_percent);
+                        yAxisData2 = echartData.map(v => v.memory_percent);
+
+                        option.xAxis[0].data = xAxisData;
+                        option.series[0].data = yAxisData1;
+                        option.series[1].data = yAxisData2;
+
+                        monnitorRecords.setOption(option);
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+                        layer.msg('错误: ' + errorMessage, { icon: 2 });
+                    }
+                })
+            }
+        });
+    </script>
+    <script>
+        // 请求系统数据并渲染
+        layui.use(function () {
+            var $ = layui.$;
+
+            $.ajax({
+                url: '/api/v1/monitor/system-info',
+                method: 'GET',
+                success: function (response) {
+                    // layer.msg(response.message, { icon: 1});
+                    // 定义字段名到中文的映射
+                    const fieldNameMapping = {
+                        'hostname': '主机名',
+                        'system_version': '系统版本',
+                        'cpu_brand': 'CPU 品牌型号',
+                        'cpu_frequency': 'CPU 频率',
+                        'cpu_core': 'CPU 核心数',
+                        'cpu_arch': 'CPU 架构',
+                        'bits': 'x64处理器',
+                        'mem_total': '总内存(GB)',
+                        'boot_time': '系统启动时间',
+                        'up_time': '系统运行时间',
+                        'flask_start_at': 'Flask服务运行时间',
+                        'python_version': 'Python 版本',
+                        'flask_version': 'Flask 版本',
+                    };
+
+                    // 定义映射顺序
+                    const order = [
+                        'hostname',
+                        'system_version',
+                        'cpu_brand',
+                        'cpu_frequency',
+                        'cpu_core',
+                        'cpu_arch',
+                        'bits',
+                        'mem_total',
+                        'boot_time',
+                        'up_time',
+                        'flask_start_at',
+                        'python_version',
+                        'flask_version'
+                    ];
+
+                    const tableBody = $('#system-info-table tbody');
+
+                    // 遍历映射顺序中的键，确保表格按照指定顺序渲染
+                    $.each(order, function (index, key) {
+                        if (response.data.hasOwnProperty(key)) {
+                            const row = $('<tr></tr>');
+                            row.append($('<td></td>').text(fieldNameMapping[key] || key));
+                            row.append($('<td></td>').text(response.data[key]));
+                            tableBody.append(row);
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+                    layer.msg('错误: ' + errorMessage, { icon: 2 });
+                }
+            });
+        });
+    </script>
+    <script>
+        // 请求磁盘信息并渲染
+        layui.use(function () {
+            var $ = layui.$;
+            var element = layui.element;
+            $.ajax({
+                url: '/api/v1/monitor/disk-partition',
+                method: 'GET',
+                success: function (response) {
+                    // 定位div
+                    const disk_partition = $('#disk_partition');
+                    response.data.forEach(function (item) {
+                        var htmlContent = `
+                                <div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+                                    <div class="pear-card2">
+                                        <div class="count pear-text">
+                                            <div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+                                                <div class="title">${item.device || 'No Name'}</div>
+                                                <br>
+                                                <div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="disk-progress">
+                                                    <div class="layui-progress-bar" style="background-color: #1e9fff;" lay-percent="${item.percent || '0%'}%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-col-md6 layui-col-sm6 layui-col-xs6" style="padding-left: 15px; padding-top: 10px;">
+                                                <br>
+                                                ${item.fstype || 'NTFS'}
+                                                <br>
+                                                ${item.free || '0GB'}&nbsp;GB&nbsp;可用，&nbsp;共&nbsp;${item.total || '0GB'}&nbsp;GB
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                        // 将这些元素添加到 .pear-card2 内
+                        disk_partition.append(htmlContent);
+                        // 渲染进度条组件
+                        element.render('progress', 'disk-progress');
+                    });
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+                    layer.msg('错误: ' + errorMessage, { icon: 2 });
+                }
+            });
+        });
+    </script>
+    <script>
+        // 请求网络接收和发送数据并渲染至
+        layui.use(['jquery', 'echarts'], function () {
+            var $ = layui.$;
+
+            var netinfo_chartDom = document.getElementById('netinfo-echarts');
+            var netinfoRecords = echarts.init(netinfo_chartDom);
+            var option;
+
+            var option = {
+                // title: {
+                //     text: 'Network Traffic (MB)'
+                // },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                    // top: 100,
+                    // containLabel: true
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['发送', '接收']
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: []
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'MB'
+                },
+                series: [
+                    {
+                        name: '发送',
+                        type: 'line',
+                        data: []
+                    },
+                    {
+                        name: '接收',
+                        type: 'line',
+                        data: []
+                    }
+                ]
+            };
+
+            netinfoRecords.setOption(option);
+
+            function fetchNetworkStats() {
+                $.ajax({
+                    url: '/api/v1/monitor/network-load',
+                    method: 'GET',
+                    success: function (response) {
+                        var now = new Date();
+                        var time = now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+
+                        var xAxisData = netinfoRecords.getOption().xAxis[0].data;
+                        var sentData = netinfoRecords.getOption().series[0].data;
+                        var recvData = netinfoRecords.getOption().series[1].data;
+
+                        xAxisData.push(time);
+                        sentData.push(response.data.bytes_sent);
+                        recvData.push(response.data.bytes_recv);
+
+                        if (xAxisData.length > 10) {
+                            xAxisData.shift();
+                            sentData.shift();
+                            recvData.shift();
+                        }
+
+                        netinfoRecords.setOption({
+                            xAxis: {
+                                data: xAxisData
+                            },
+                            series: [
+                                {
+                                    data: sentData
+                                },
+                                {
+                                    data: recvData
+                                }
+                            ]
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '请求失败';
+                        layer.msg('错误: ' + errorMessage, { icon: 2 });
+                    }
+                });
+            }
+
+            // 延迟1毫秒后执行函数，在DOM元素没有明确定义宽高，图表无法加载；需要出发一次resize
+            setTimeout(netinfoRecords.resize, 1);
+
+            // 执行一次折线图请求渲染
+            setTimeout(fetchNetworkStats, 100);
+
+            // 响应窗口调整大小
+            window.addEventListener('resize', netinfoRecords.resize);
+
+            // 10秒获取一次流量信息
+            setInterval(fetchNetworkStats, 10000);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8" />
+    <title>权限管理</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+  </head>
+  <body>
+    <div style="padding: 16px">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <table
+            class="layui-hide"
+            id="role-table"
+            lay-filter="role-table"
+          ></table>
+        </div>
+      </div>
+    </div>
+    <form
+      class="layui-form"
+      lay-filter="role-form"
+      id="role-form"
+      action=""
+      style="padding: 15px; display: none"
+    >
+      <div class="layui-form-item">
+        <label class="layui-form-label">ID</label>
+        <div class="layui-input-block">
+          <input
+            type="text"
+            name="id"
+            value="0"
+            lay-verify="required"
+            autocomplete="off"
+            class="layui-input"
+            disabled
+          />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-block">
+          <input
+            type="text"
+            name="name"
+            placeholder="请输入用户名"
+            lay-verify="required"
+            autocomplete="off"
+            class="layui-input"
+          />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">标识</label>
+        <div class="layui-input-block">
+          <input
+            type="text"
+            name="code"
+            placeholder="请输入用户标识"
+            lay-verify="required"
+            autocomplete="off"
+            class="layui-input"
+          />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-block">
+          <input
+            type="text"
+            name="desc"
+            placeholder="请输入用户描述"
+            autocomplete="off"
+            class="layui-input"
+          />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">权限列表</label>
+        <div class="layui-input-block">
+          <input
+            type="text"
+            name="rights_ids"
+            placeholder="请输入用户权限列表"
+            autocomplete="off"
+            class="layui-input"
+          />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button
+            type="submit"
+            class="layui-btn"
+            lay-submit
+            lay-filter="role-form-btn"
+          >
+            立即提交
+          </button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+      </div>
+    </form>
+    <script type="text/html" id="role-toolbar">
+      <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="role-toolbar-add">
+          新增角色
+        </button>
+      </div>
+    </script>
+    <script type="text/html" id="role-tool">
+      <div class="layui-btn-container">
+        <button
+          class="layui-btn layui-btn-sm layui-bg-blue"
+          lay-event="role-tool-edit"
+        >
+          编辑
+        </button>
+        <button
+          class="layui-btn layui-btn-sm layui-bg-yellow"
+          lay-event="role-tool-detail"
+        >
+          授权
+        </button>
+        <button
+          class="layui-btn layui-btn-sm layui-bg-red"
+          lay-event="role-tool-del"
+        >
+          删除
+        </button>
+      </div>
+    </script>
+
+    <!--授权表单-->
+    <form
+      class="layui-form"
+      action=""
+      style="display: none"
+      id="role-rights-form"
+      lay-filter="role-rights-form"
+    >
+      <div class="row" style="margin: 10px 5px">
+        <ul id="role_rights" class="dtree" data-id="0"></ul>
+      </div>
+      <div class="bottom">
+        <div class="button-container">
+          <button
+            type="submit"
+            class="layui-btn layui-btn-primary layui-btn-sm"
+            lay-submit
+            lay-filter="role-rights-save"
+          >
+            <i class="layui-icon layui-icon-ok"></i>
+            提交
+          </button>
+          <button type="reset" class="layui-btn layui-btn-sm">
+            <i class="layui-icon layui-icon-refresh"></i>
+            重置
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <script>
+      layui.use(function () {
+        var table = layui.table;
+        var $ = layui.$;
+        var form = layui.form;
+        let tree = layui.tree;
+
+        let role_id = -1;
+
+        table.render({
+          elem: "#role-table",
+          id: "role-table",
+          url: "/api/v1/role", // 此处为静态模拟数据，实际使用时需换成真实接口
+          height: "full-35", // 最大高度减去其他容器已占有的高度差
+          toolbar: "#role-toolbar",
+          page: true,
+          cols: [
+            [
+              //标题栏
+              { field: "id", title: "ID", width: 80, sort: true },
+              { field: "name", title: "用户名", width: 120 },
+              { field: "code", title: "用户标识", width: 160 },
+              { field: "desc", title: "描述", maxWidth: 120 },
+              { field: "ids", title: "权限列表", width: 100 },
+              {
+                fixed: "right",
+                title: "操作",
+                width: 180,
+                align: "center",
+                toolbar: "#role-tool",
+              },
+            ],
+          ],
+        });
+
+        table.on("toolbar(role-table)", function (obj) {
+          if (obj.event === "role-toolbar-add") {
+            $("#role-form")[0].reset();
+            layer.open({
+              type: 1,
+              shade: false,
+              content: $("#role-form"),
+              area: ["50%", "80%"],
+            });
+            form.render($("#role-form"));
+          }
+        });
+
+        table.on("tool(role-table)", function (obj) {
+          if (obj.event === "role-tool-edit") {
+            form.val("role-form", obj.data);
+            layer.open({
+              type: 1,
+              shade: false,
+              content: $("#role-form"),
+              area: ["50%", "80%"],
+            });
+          } else if (obj.event === "role-tool-del") {
+            $.ajax({
+              url: `/api/v1/role/${obj.data.id}`,
+              type: "DELETE",
+              contentType: "application/json",
+              success: function (res) {
+                if (!res.code) {
+                  table.reloadData("role-table");
+                }
+              },
+            });
+          } else if (obj.event === "role-tool-detail") {
+            //  角色授权 role-tool-detail
+            role_id = obj.data["id"];
+            $.ajax({
+              url: "/api/v1/rights/tree",
+              type: "get",
+              success: function (ret) {
+                // 渲染组件数据
+                tree.render({
+                  elem: "#role_rights",
+                  id: "role_rights",
+                  data: ret.data,
+                  showCheckbox: true,
+                });
+
+                // 获取需要授权角色的权限数据
+                $.ajax({
+                  url: `/api/v1/role/role_rights/${role_id}`,
+                  type: "get",
+                  success: function (ret) {
+                    tree.setChecked("role_rights", ret.data);
+                  },
+                });
+              },
+            });
+
+            layer.open({
+              type: 1,
+              title: "授权",
+              shade: false,
+              area: ["500px", "500px"],
+              content: $("#role-rights-form"),
+            });
+          }
+        });
+
+        form.on("submit(role-form-btn)", function (data) {
+          var field = data.field;
+          let method, url;
+          if (field.id == 0) {
+            field.id = null;
+            method = "POST";
+            url = "/api/v1/role";
+          } else {
+            method = "PUT";
+            url = `/api/v1/role/${field.id}`;
+          }
+          $.ajax({
+            url: url,
+            type: method,
+            contentType: "application/json",
+            data: JSON.stringify(field),
+            success: function (res) {
+              if (!res.code) {
+                layer.closeAll();
+                table.reloadData("role-table");
+              }
+            },
+          });
+          return false;
+        });
+
+        function get_id(list_tree_data) {
+          if (Array.isArray(list_tree_data)) {
+            let ret = [];
+            $.each(list_tree_data, function (index, item) {
+              if (item?.children) {
+                ret.push(...get_id(item.children));
+              }
+              ret.push(...get_id(item));
+            });
+            return ret;
+          } else {
+            return [list_tree_data.id];
+          }
+        }
+
+        form.on("submit(role-rights-save)", function (data) {
+          let param = tree.getChecked("role_rights"); // 获取选中节点的数据
+          let rights_ids = get_id(param).join();
+          $.ajax({
+            url: `/api/v1/role/role_rights/${role_id}`,
+            data: JSON.stringify({ rights_ids: rights_ids }),
+            dataType: "json",
+            contentType: "application/json",
+            type: "put",
+            success: function (result) {
+              if (result.code === 0) {
+                layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
+                  layer.closeAll();
+                });
+              } else {
+                layer.msg(result.msg, { icon: 2, time: 1000 });
+              }
+            },
+          });
+          return false;
+        });
+      });
+    </script>
+  </body>
+</html>

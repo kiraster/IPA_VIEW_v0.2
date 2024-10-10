@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <title>日志</title>
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+</head>
+
+<body>
+  <!-- 日志表格 -->
+  <div style="padding: 16px">
+    <div class="layui-card">
+      <div class="layui-card-body">
+        <table class="layui-hide" id="log-table" lay-filter="log-table"></table>
+      </div>
+    </div>
+  </div>
+  <!-- 渲染下拉菜单，表格渲染，查询，头部工具栏事件，提交修改信息 -->
+  <script>
+
+    // 渲染时间戳列
+    function render_timestamp(d) {
+      // 替换逗号为点，以便 moment 解析
+      const correctedTimestamp = d.created_at.replace(',', '.');
+      // 使用 moment 解析时间戳并格式化
+      return moment(correctedTimestamp, 'YYYY-MM-DD HH:mm:ss.SSS').format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    // 获取当前时间
+    function getCurrentTime() {
+      const now = new Date();
+
+      // 获取年份、月份、日期、小时、分钟和秒
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1
+      const date = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+
+      // 格式化为所需格式
+      return `${year}-${month}-${date} ${hours}-${minutes}-${seconds}`;
+    }
+
+    layui.use(function () {
+      var table = layui.table;
+      var $ = layui.$;
+      var layer = layui.layer;
+
+      // 表格渲染
+      table.render({
+        elem: "#log-table",
+        id: "log-table",
+        url: "/api/v1/logs",
+        defaultToolbar: ['filter', {
+          title: '导出所有行',
+          layEvent: 'LOGS_EXPORT_ALL',
+          icon: 'layui-icon-export',
+        },
+          'print'
+        ],
+        // height: "full-35", // 注释表示采用默认值，自适应
+        // toolbar: 'default',
+        toolbar: true, // 仅开启工具栏右侧，不显示左侧模板
+        // page: true, // 开启分页
+        page: {
+          limit: 20, //每页显示20行数据
+        },
+        cols: [
+          [
+            { field: "timestamp", title: "时间戳", sort: true, align: 'center', width: 200 }, // , fixed: "left" 横向滚动冻结列
+            { field: "thread", title: "线程", sort: true, align: 'center', width: 300 },
+            { field: "task_id", title: "任务ID", sort: true, align: 'center', width: 280 },
+            { field: "file_name", title: "文件名", sort: true, align: 'center', width: 180 },
+            { field: "level", title: "日志等级", sort: true, align: 'center', width: 120 },
+            { field: "message", title: "内容", sort: true },
+          ],
+        ],
+      });
+
+      // 工具栏导出所数据行
+      table.on('toolbar(log-table)', function (obj) {
+        // 根据 lay-event 的值执行导出所有行
+        switch (obj.event) {
+          case 'LOGS_EXPORT_ALL':
+            var pageData = {
+              page: 1,
+              limit: 26000
+            } //默认导出26000条，约单个日志文件的存储总行数
+
+            var layEvent = obj.event;
+            $.get("/api/v1/logs", pageData, function (response) {
+              if (response.code === 0) {
+                table.exportFile(
+                  'log-table',
+                  response.data,
+                  {
+                    type: 'csv',
+                    title: '导出日志_' + getCurrentTime(),
+                  }
+                );
+              } else {
+                layer.msg(response.message);
+              }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+              console.error('Error fetching logs:', textStatus, errorThrown);
+            });
+            break;
+        };
+      });
+    });
+  </script>
+</body>
+
+</html>
