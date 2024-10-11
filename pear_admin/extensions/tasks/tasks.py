@@ -16,7 +16,6 @@ def test():
 # 调用snmp_polling.py文件里的任务函数
 def job1():
     try:
-        poll_write()
         from ... import create_app
         app = create_app()
         with app.app_context():
