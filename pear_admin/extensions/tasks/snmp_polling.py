@@ -11,19 +11,20 @@ task_logger = get_logger('task_log')
 # oid值
 oid_dict = {
     # arp表oid
-    "arp_table": '1.3.6.1.2.1.4.22.1.2',
+    "arp_table": (1, 3, 6, 1, 2, 1, 4, 22, 1, 2),
     # mac地址表oid
-    "mac_address_table": '1.3.6.1.2.1.17.7.1.2.2.1.2',
-    # "mac_address_table": 1.3.6.1.2.1.17.4.3.1.2,
-    # 接口VLAN类型h3c oid: 1.3.6.1.4.1.25506.8.35.1.1.1.5
-    # 元组内添加其他厂商port_type的oid
-    "port_type": ['1.3.6.1.4.1.2011.5.25.42.1.1.1.3.1.32','1.3.6.1.4.1.25506.8.35.1.1.1.5'],
-    # 接口索引对应接口名称:1.3.6.1.2.1.2.2.1.2
-    "port_index": '1.3.6.1.2.1.2.2.1.2',
-    # 系统名称oid，获取交换机system name: 1.3.6.1.2.1.1.5
-    "system_name": '1.3.6.1.2.1.1.5',
-    # IP地址+子网掩码oid （ipAdEntNetMask）: 1.3.6.1.2.1.4.20.1.3
-    "ip_mask": '1.3.6.1.2.1.4.20.1.3',
+    "mac_address_table": (1, 3, 6, 1, 2, 1, 17, 7, 1, 2, 2, 1, 2),
+    # "mac_address_table": (1, 3, 6, 1, 2, 1, 17, 4, 3, 1, 2),
+    # 接口VLAN类型oid  1.3.6.1.4.1.25506.8.35.1.1.1.5
+    "port_type": (1, 3, 6, 1, 4, 1, 25506, 8, 35, 1, 1, 1, 5),
+    # 接口索引对应接口名称 1.3.6.1.2.1.2.2.1.2
+    "port_index": (1, 3, 6, 1, 2, 1, 2, 2, 1, 2),
+    # 系统名称oid，获取交换机system name 1, 3, 6, 1, 2, 1, 1, 5
+    "system_name": (1, 3, 6, 1, 2, 1, 1, 5),
+    # IP地址+子网掩码oid （ipAdEntNetMask）.1.3.6.1.2.1.4.20.1.3
+    "ip_mask": (1, 3, 6, 1, 2, 1, 4, 20, 1, 3),
+    # IP地址（ipAdEntAddr）1.3.6.1.2.1.4.20.1.1
+    # "test": (1, 3, 6, 1, 2, 1, 4, 20, 1, 1),
 }
 
 
@@ -459,17 +460,7 @@ def poll_write():
             snmp = Snmp(item['snmp_host'], item['snmp_community'])
             mac_address_table = snmp.get_mac_address_table(oid_dict.get('mac_address_table'))
             port_index = snmp.get_port_index(oid_dict.get('port_index'))
-
-            # port_type 使用私有oid值，每家厂商必不一致
-            # 厂商的企业 OID，由 IANA（互联网号码分配局）分配给每个厂商的唯一标识符
-            # 私有 OID 的前缀通常是 1.3.6.1.4.1 + (厂商的唯一标识符)，例如 1.3.6.1.4.1.25506 （华三）
-            # 添加判断，当get_port_type函数返回值为true时中断循环
-            for available_oid in oid_dict['port_type']:
-                port_type = snmp.get_port_type(available_oid)
-                if port_type:
-                    break
-
-            # port_type = snmp.get_port_type(oid_dict.get('port_type'))
+            port_type = snmp.get_port_type(oid_dict.get('port_type'))
             system_name = snmp.get_system_name(oid_dict.get('system_name'))
 
             pre_snmp = PreSNMP(mac_address_table=mac_address_table, port_index=port_index, port_type=port_type,
