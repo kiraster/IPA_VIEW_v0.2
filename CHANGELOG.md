@@ -1,10 +1,19 @@
 # 更新日志
 
+## [0.2] - 2024-10-13
+
+### 变更
+
+- 修改`pear_admin\extensions\tasks\snmp_polling.py`文件OID字典的值类型为字符串
+- 修改`port_type`值为列表，当需要`snmp`获取`port_type`值时，循环尝试列表中的元素，返回值为true时中断循环
+
+---
+
 ## [0.2] - 2024-10-10
 
 ### 新增
 
-- 添加dockerfile文件，用于构建镜像
+- 添加`dockerfile`文件，用于构建镜像
 
 ### 变更
 
@@ -23,7 +32,7 @@
 ### 新增
 
 - 添加日志记录到文件功能
-- 添加`pear_admin/extensions/tasks/tasks.json` snmp轮询参数配置文件，可于应用配置页面修改写入
+- 添加`pear_admin/extensions/tasks/tasks.json` `snmp`轮询参数配置文件，可于应用配置页面修改写入
 - 添加`generate_secret_key.py`文件，用于随机生成的32字节的 SECRET_KEY并写入configs.py配置文件
 - 添加`waitress`作为`wsgi`启动flask
 - 添加bat启动脚本启动flask
@@ -32,7 +41,7 @@
 
 ### 变更
 
-- snmp轮询参数的配置文件移动到`pear_admin/extensions/tasks/tasks.json`文件
+- `snmp`轮询参数的配置文件移动到`pear_admin/extensions/tasks/tasks.json`文件
 - 修改日志界面显示内容
 - 修改IP地址信息页面和日志页面的`defaultToolbar`导出功能为导出所有
 - README文件变更说明
