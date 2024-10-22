@@ -466,6 +466,8 @@ docker run -d --restart always -p 5666:8080 ipa-view:v0.2
 
 ## 预览
 
+高清大图看这：https://kiraster.github.io/gallery/IPA_VIEW_v0.2/
+
 ![ScreenCaputure1314](https://s2.loli.net/2024/09/05/9ITPRYf1zLnGF7S.jpg)
 
 ![ScreenCaputure1320](https://s2.loli.net/2024/09/05/pWmb6NkjAiaZVPo.jpg)
