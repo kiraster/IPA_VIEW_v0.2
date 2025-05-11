@@ -12,7 +12,10 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN echo "Asia/Shanghai" > /etc/timezone
 
 # 安装所需的依赖
-RUN pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple/ -r requirements.txt
+# 国内源
+# RUN pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple/ -r requirements.txt
+# 直通
+RUN pip install -r requirements.txt
 
 # 运行数据库初始化脚本
 RUN flask init
