@@ -30,4 +30,4 @@ EXPOSE 5666
 
 # 运行 Flask 应用
 # CMD ["waitress-serve", "--call", "pear_admin:create_app"]
-RUN flask run
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5666"]
