@@ -12,7 +12,8 @@ ip_api = Blueprint("ip_table", __name__, url_prefix="/ips")
 
 
 # IP地址信息表数据-查询接口
-@ip_api.get("/")
+# @ip_api.get("/")
+@ip_api.get("", strict_slashes=False)  # 关键修改：去掉 "/"，并禁用自动重定向
 def get_ips():
     try:
         page = request.args.get("page", default=1, type=int)
