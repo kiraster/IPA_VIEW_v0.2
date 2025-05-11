@@ -26,7 +26,8 @@ RUN python generate_secret_key.py
 # 暴露应用使用的端口
 # 只是一个标记指示，实际操作中使用其他端口并不影响
 # 规范使用的话与实际使用的端口一致
-EXPOSE 8080
+EXPOSE 5666
 
 # 运行 Flask 应用
-CMD ["waitress-serve", "--call", "pear_admin:create_app"]
+# CMD ["waitress-serve", "--call", "pear_admin:create_app"]
+RUN flask run
