@@ -12,7 +12,7 @@
 
 **感谢:** [pear-admin-flask](https://gitee.com/pear-admin/pear-admin-flask) Python 后台管理系统开源项目及其贡献者
 
-**在线Demo：**
+**在线Demo：**https://kucsexuzxxdj.ap-northeast-1.clawcloudrun.com/  (用户名/密码：admin/123456)
 
 ## 安装使用
 
@@ -178,7 +178,7 @@ docker build -t ipa-view:v0.2 .
 
 #### 使用公共镜像
 
-需要从Docker Hub拉取镜像(当前至构建了这一个版本)
+需要从Docker Hub拉取镜像(当前只构建了这一个版本)
 
 ```
 docker pull kiraster/ipa_view:latest
