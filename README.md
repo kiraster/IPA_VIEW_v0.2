@@ -12,6 +12,8 @@
 
 **感谢:** [pear-admin-flask](https://gitee.com/pear-admin/pear-admin-flask) Python 后台管理系统开源项目及其贡献者
 
+**在线Demo：**
+
 ## 安装使用
 
 ### 下载源码
@@ -164,12 +166,22 @@ waitress-serve --port 5666  --call  pear_admin:create_app
 
 **如需修改代码内容，如修改dockerfile文件、修改配置、修改初始化数据等，需在构建镜像步骤前完成**
 
-#### 构建镜像
+#### 本地构建镜像（推荐）
+
+本地构建镜像，可以自定义修改参数和配置等，灵活
 
 在项目根目录下执行
 
 ```
 docker build -t ipa-view:v0.2 .
+```
+
+#### 使用公共镜像
+
+需要从Docker Hub拉取镜像(当前至构建了这一个版本)
+
+```
+docker pull kiraster/ipa_view:latest
 ```
 
 #### 创建并运行 Docker 容器
@@ -178,6 +190,8 @@ docker build -t ipa-view:v0.2 .
 
 ```
 docker run -d --restart always -p 5666:8080 ipa-view:v0.2
+或
+docker run -d --restart always -p 5666:8080 kiraster/ipa_view:latest
 ```
 
 这里贴上将代码进行docker容器化的笔记提供参考：https://kiraster.github.io/posts/297bc3bd.html
