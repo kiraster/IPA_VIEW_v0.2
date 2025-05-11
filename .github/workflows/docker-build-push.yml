@@ -1,0 +1,56 @@
+name: Publish Docker Image  # 工作流名称，显示在GitHub Actions界面
+
+on:
+  push:
+    tags: [ 'v*.*.*' ]  # 触发条件：仅当推送符合vX.Y.Z格式的tag时运行（如v1.0.0）
+
+jobs:
+  push_to_registry:
+    name: Push Docker Image  # 任务名称
+    runs-on: ubuntu-latest   # 运行环境：最新版Ubuntu
+
+    steps:
+      # 步骤1：检出代码
+      - name: Checkout Code
+        uses: actions/checkout@v4  # 官方action，用于拉取仓库代码
+        with:
+          fetch-depth: 0  # 获取完整git历史记录（用于版本号提取）
+
+      # 步骤2：设置Docker Buildx（多平台构建工具）
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3  # 配置Buildx环境
+
+      # 步骤3：登录Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # 从GitHub Secrets读取用户名
+          password: ${{ secrets.DOCKERHUB_TOKEN }}  # 从GitHub Secrets读取访问令牌
+
+      # 步骤4：生成镜像标签
+      - name: Extract Version Tags
+        id: meta  # 步骤ID，用于后续引用输出
+        uses: docker/metadata-action@v5  # 自动生成标签和元数据
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/ipa_view  # 目标镜像名称（格式：用户名/仓库名）
+          flavor: |
+            latest=false  # 禁用metadata-action默认的latest标签生成逻辑
+          tags: |  # 自定义标签规则（注意缩进）
+            # 硬编码latest标签，仅当推送tag时生成
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            # 从git tag提取完整版本号（如v1.0.0 → 1.0.0）
+            type=semver,pattern={{version}},enable=${{ startsWith(github.ref, 'refs/tags/') }}
+
+      # 步骤5：构建并推送镜像
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .  # 构建上下文：当前目录
+          push: true  # 启用推送（因为触发条件已限定为tag推送）
+          tags: ${{ steps.meta.outputs.tags }}  # 使用前一步生成的标签
+          labels: ${{ steps.meta.outputs.labels }}  # 自动生成的镜像标签
+          platforms: linux/amd64  # 目标平台：Intel 64位
+          # 构建缓存配置（从指定镜像拉取缓存）
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ipa_view:buildcache
+          # 将构建缓存推送到指定镜像（模式设为max以包含全部缓存层）
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ipa_view:buildcache,mode=max
