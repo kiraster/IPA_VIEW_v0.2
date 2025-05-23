@@ -12,7 +12,7 @@
 
 **感谢:** [pear-admin-flask](https://gitee.com/pear-admin/pear-admin-flask) Python 后台管理系统开源项目及其贡献者
 
-**在线Demo**：https://kucsexuzxxdj.ap-northeast-1.clawcloudrun.com/  (用户名/密码：admin/123456)
+**在线Demo**：[https://qjrtrjgujysh.ap-northeast-1.clawcloudrun.com](https://qjrtrjgujysh.ap-northeast-1.clawcloudrun.com/)  (用户名/密码：admin/123456)
 
 ## 安装使用
 
