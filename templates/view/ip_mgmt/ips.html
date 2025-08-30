@@ -194,16 +194,24 @@
             { field: "updated_at", title: "更新时间", sort: true, width: 180, align: 'center', templet: render_updated_at },
           ],
         ],
+        // done: function (res, curr, count) {
+        //   let empty_ip_color = "#FFFACD"; // IP为空时的背景颜色
+        //   res.data.forEach(function (item, index) {
+        //     // 如果IP为空，设置行的背景颜色
+        //     if (!item.ip || item.ip.trim() === "") {
+        //       $('.layui-table').find('tr[data-index="' + index + '"]').css('background-color', empty_ip_color);
+        //     }
+        //   });
+        // }
         done: function (res, curr, count) {
-          let empty_ip_color = "#FFFACD"; // IP为空时的背景颜色
+          let empty_ip_color = "#FFFACD";
           res.data.forEach(function (item, index) {
-            // 如果IP为空，设置行的背景颜色
-            if (!item.ip || item.ip.trim() === "") {
-              $('.layui-table').find('tr[data-index="' + index + '"]').css('background-color', empty_ip_color);
-            }
+              // 修复后的选择器 - 使用表格的ID选择器
+              if (!item.ip || item.ip.trim() === "") {
+                  $('#ip-table').next().find('tr[data-index="' + index + '"]').css('background-color', empty_ip_color);
+              }
           });
         }
-
       });
 
       // 查询
